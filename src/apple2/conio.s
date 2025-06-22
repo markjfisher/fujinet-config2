@@ -85,27 +85,23 @@ vline_using_upper:
         tay
 
         lda     (ptr1), y                               ; contains the upper/lower offset, and the right offset
-        sta     ptr2                                    ; save the character to write
+        sta     _params + vlinexy_params::right         ; reuse right as a save location for the writing value
 
-        ; initialize current position
-        lda     _params + vlinexy_params::x_v
-        sta     ptr2+1                                  ; save x position
-        lda     _params + vlinexy_params::y_v
-        sta     tmp1                                    ; save current y position
+        ; y_v already contains the starting y position, we'll increment it directly
 
 vline_loop:
         ; position cursor at current x,y
-        lda     ptr2+1                                  ; x position
+        lda     _params + vlinexy_params::x_v
         jsr     pusha
-        lda     tmp1                                    ; current y position
+        lda     _params + vlinexy_params::y_v           ; current y position
         jsr     _gotoxy
 
         ; write the character
-        lda     ptr2                                    ; character to write
+        lda     _params + vlinexy_params::right         ; character to write
         jsr     _cputc
 
         ; increment y position and decrement length
-        inc     tmp1
+        inc     _params + vlinexy_params::y_v
         dec     _params + vlinexy_params::len
         bne     vline_loop
 
