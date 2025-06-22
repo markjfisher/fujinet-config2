@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+you are an expert in 6502 assembly language, and C for the cc65 development environment.
+you will follow existing layout of assembly files.
+you will prefer lowercase labels and instructions.
+the project uses cc65 to compile C and asm files.
+The C standard is c99, with all variables being defined at the top of block structures, rather than inline.
+The asm is compiled with ca65.
+This project is for cross platform 8 bit device, including atari 8 bit, apple2 8 bit, commodore 64, where memory is limited.
+For any C files, they must try not to use expensive library functions such as printf, but stdlib and memory efficient functions like memmove and memcpy are prefered.
+The preferred convention for passing parameters to functions in asm files is to create dedicated memory locations for the data that needs to be communicated, and the cc65 C conventions of passing values via the software stack should be avoided.
+Your responses should be to the point. You will say when you do not know the answer rather than guessing, or at least indicate that you are postulating a solution, or need more information to formulate a better response.
+
+Unit tests are written for C and ASM code in the testing/unit directory, with subdirs for each platform; e.g. atari, apple2.
+
+Unit tests are written in 3 files per test:
+- A subdir contains all 3 files
+- The files consist of:
+  - an asm file "test_<fn under test>.s" which contains the unit test application code to invoke and run the function under test.
+  - a yaml file "test_<fn under test>.yaml which contains the "build" instructions for the unit tester to compile the above unit test along with the function under test and any supporting files and folders. This will be simple, and an example of good usage is in the file test_hlinexy.yaml. Do not stray from this syntax
+  - a TXT file "test_<fn under test>.txt" containing the DSL instructions for controlling running the application and providing the unit test assertions. Use test_hlinexy.txt as an example of the syntax.
+
+Do not offer to run tests directly, as it requires setup for the environment. The user will run them directly and offer output from them to analyse. You should ask the user to run the test for you.

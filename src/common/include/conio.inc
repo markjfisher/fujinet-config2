@@ -14,3 +14,10 @@
     len     .byte
     type    .byte
 .endstruct
+
+.struct vlinexy_params
+    x_v     .byte
+    y_v     .byte
+    len     .byte
+    right   .byte
+.endstruct

@@ -1,4 +1,5 @@
         .export     _hlinexy_asm
+        .export     _vlinexy_asm
 
         .import     _cputc
         .import     _gotoxy
@@ -55,6 +56,59 @@ using_upper:
         bne     :-
 
 done:
+        rts
+
+_vlinexy_asm:
+        ; check if length is zero first
+        lda     _params + vlinexy_params::len
+        bne     vline_start
+        rts
+
+vline_start:
+        ; get the value we want to write to screen
+        lda     #<vchar_upper
+        sta     ptr1
+        lda     #>vchar_upper
+        sta     ptr1+1
+        ldy     #$00
+
+        ; need to check if lower is set for which offset to use
+        lda     _lower
+        beq     vline_using_upper
+        ldy     #$02                                    ; vchar table has 2 entries per row (left, right)
+
+vline_using_upper:
+        ; add the right flag offset so we point to the correct element in the vchar_* tables
+        tya
+        clc
+        adc     _params + vlinexy_params::right
+        tay
+
+        lda     (ptr1), y                               ; contains the upper/lower offset, and the right offset
+        sta     ptr2                                    ; save the character to write
+
+        ; initialize current position
+        lda     _params + vlinexy_params::x_v
+        sta     ptr2+1                                  ; save x position
+        lda     _params + vlinexy_params::y_v
+        sta     tmp1                                    ; save current y position
+
+vline_loop:
+        ; position cursor at current x,y
+        lda     ptr2+1                                  ; x position
+        jsr     pusha
+        lda     tmp1                                    ; current y position
+        jsr     _gotoxy
+
+        ; write the character
+        lda     ptr2                                    ; character to write
+        jsr     _cputc
+
+        ; increment y position and decrement length
+        inc     tmp1
+        dec     _params + vlinexy_params::len
+        bne     vline_loop
+
         rts
 
 .data

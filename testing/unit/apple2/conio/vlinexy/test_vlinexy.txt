@@ -1,0 +1,56 @@
+marker $$testing vlinexy conio apple2$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t00
+
+registers set cycle_count = 0
+run while CP != $t00_end
+
+assert $gxy_calls = 3                   $$t00: gotoxy called 3 times$$
+assert $gxy_x_values ~ 0x(03,03,03)     $$t00: gotoxy called with x=3 each time$$
+assert $gxy_y_values ~ 0x(04,05,06)     $$t00: gotoxy called with y=4,5,6$$
+assert $cpc_idx = 3                     $$t00: cputc called 3 times$$
+assert $cpc_vs ~ "!!!"                  $$t00: cputc called with correct value (upper left)$$
+
+run while CP != $t01
+registers set cycle_count = 0
+run while CP != $t01_end
+
+assert $gxy_calls = 3                   $$t01: gotoxy called 3 times$$
+assert $gxy_x_values ~ 0x(05,05,05)     $$t01: gotoxy called with x=5 each time$$
+assert $gxy_y_values ~ 0x(02,03,04)     $$t01: gotoxy called with y=2,3,4$$
+assert $cpc_idx = 3                     $$t01: cputc called 3 times$$
+assert $cpc_vs ~ "!!!"                  $$t01: cputc called with correct value (upper right)$$
+
+run while CP != $t10
+registers set cycle_count = 0
+run while CP != $t10_end
+
+assert $gxy_calls = 3                   $$t10: gotoxy called 3 times$$
+assert $gxy_x_values ~ 0x(07,07,07)     $$t10: gotoxy called with x=7 each time$$
+assert $gxy_y_values ~ 0x(01,02,03)     $$t10: gotoxy called with y=1,2,3$$
+assert $cpc_idx = 3                     $$t10: cputc called 3 times$$
+assert $cpc_vs ~ 0x(DA,DA,DA)           $$t10: cputc called with correct value (lower left)$$
+
+run while CP != $t11
+registers set cycle_count = 0
+run while CP != $t11_end
+
+assert $gxy_calls = 3                   $$t11: gotoxy called 3 times$$
+assert $gxy_x_values ~ 0x(09,09,09)     $$t11: gotoxy called with x=9 each time$$
+assert $gxy_y_values ~ 0x(03,04,05)     $$t11: gotoxy called with y=3,4,5$$
+assert $cpc_idx = 3                     $$t11: cputc called 3 times$$
+assert $cpc_vs ~ 0x(DF,DF,DF)           $$t11: cputc called with correct value (lower right)$$
+
+run while CP != $t1
+registers set cycle_count = 0
+run while CP != $t1_end
+
+assert $gxy_calls = 0                   $$t1: gotoxy called 0 times$$
+assert $cpc_idx = 0                     $$t1: cputc called 0 times$$ 
