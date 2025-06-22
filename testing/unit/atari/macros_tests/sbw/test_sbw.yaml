@@ -1,0 +1,9 @@
+name: sbw macro tests
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_atari.yaml
+
+src_files:
+  - test_sbw.s
+
+test_script: test_sbw.txt 

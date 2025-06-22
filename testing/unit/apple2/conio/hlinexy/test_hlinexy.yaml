@@ -1,0 +1,11 @@
+name: hlinexy tests
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_apple2.yaml
+
+src_files:
+  - ${WS_ROOT}/src/common/data.s
+  - ${WS_ROOT}/src/apple2/conio.s
+  - test_hlinexy.s
+
+test_script: test_hlinexy.txt

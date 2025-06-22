@@ -1,0 +1,80 @@
+marker $$testing hlinexy_c conio apple2$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t00
+
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0 (saves 180 cycles if len==0, but wastes 35 all other cases, which are more likely)
+// note: asm is 356 and has check.
+run while CP != $t00_end
+
+assert $gxy_x = 3                       $$t00: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t00: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t00: cputc called 5 times$$
+assert $cpc_vs ~ 0x(A0,A0,A0,A0,A0)     $$t00: cputc called with correct value$$
+
+run while CP != $t01
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0
+run while CP != $t01_end
+
+assert $gxy_x = 3                       $$t01: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t01: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t01: cputc called 5 times$$
+assert $cpc_vs ~ "-----"                $$t01: cputc called with correct value$$
+
+run while CP != $t02
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0
+run while CP != $t02_end
+
+assert $gxy_x = 3                       $$t02: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t02: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t02: cputc called 5 times$$
+assert $cpc_vs ~ "_____"                $$t02: cputc called with correct value$$
+
+run while CP != $t10
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0
+run while CP != $t10_end
+
+assert $gxy_x = 3                       $$t10: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t10: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t10: cputc called 5 times$$
+assert $cpc_vs ~ 0x(DC,DC,DC,DC,DC)     $$t10: cputc called with correct value$$
+
+run while CP != $t11
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0
+run while CP != $t11_end
+
+assert $gxy_x = 3                       $$t11: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t11: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t11: cputc called 5 times$$
+assert $cpc_vs ~ 0x(D3,D3,D3,D3,D3)     $$t11: cputc called with correct value$$
+
+run while CP != $t12
+registers set cycle_count = 0
+// 1535 cycles -> 807 extracting var -> 842 testing len == 0
+run while CP != $t12_end
+
+assert $gxy_x = 3                       $$t12: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t12: gotoxy called with y=4$$
+assert $cpc_idx = 5                     $$t12: cputc called 5 times$$
+assert $cpc_vs ~ "_____"                $$t12: cputc called with correct value$$
+
+run while CP != $t1
+registers set cycle_count = 0
+// 215 cycles -> 415 extracting var -> 235 extract and testing len == 0
+// asm version is 112 cycles
+run while CP != $t1_end
+
+assert $gxy_x = 3                       $$t1: gotoxy called with x=3$$
+assert $gxy_y = 4                       $$t1: gotoxy called with y=4$$
+assert $cpc_idx = 0                     $$t1: cputc called 0 times$$
