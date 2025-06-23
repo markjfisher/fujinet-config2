@@ -10,6 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
+// asm: 582, c: 1036
 run while CP != $t00_end
 
 assert $gxy_calls = 3                   $$t00: gotoxy called 3 times$$
@@ -20,6 +21,7 @@ assert $cpc_vs ~ "!!!"                  $$t00: cputc called with correct value (
 
 run while CP != $t01
 registers set cycle_count = 0
+// asm: 582, c: 1036
 run while CP != $t01_end
 
 assert $gxy_calls = 3                   $$t01: gotoxy called 3 times$$
@@ -30,6 +32,7 @@ assert $cpc_vs ~ "!!!"                  $$t01: cputc called with correct value (
 
 run while CP != $t10
 registers set cycle_count = 0
+// asm: 582, c: 1036
 run while CP != $t10_end
 
 assert $gxy_calls = 3                   $$t10: gotoxy called 3 times$$
@@ -40,6 +43,7 @@ assert $cpc_vs ~ 0x(DA,DA,DA)           $$t10: cputc called with correct value (
 
 run while CP != $t11
 registers set cycle_count = 0
+// asm: 583, c: 1036
 run while CP != $t11_end
 
 assert $gxy_calls = 3                   $$t11: gotoxy called 3 times$$
@@ -50,6 +54,7 @@ assert $cpc_vs ~ 0x(DF,DF,DF)           $$t11: cputc called with correct value (
 
 run while CP != $t1
 registers set cycle_count = 0
+// asm: 31, c: 334
 run while CP != $t1_end
 
 assert $gxy_calls = 0                   $$t1: gotoxy called 0 times$$
