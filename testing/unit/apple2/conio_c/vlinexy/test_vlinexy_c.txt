@@ -10,7 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
-// 1333 cycles, cf 513 for hand asm
+// 1027 cycles, cf 513 for hand asm
 run while CP != $t00_end
 
 assert $cxy_calls = 3                   $$t00: cputcxy called 3 times$$

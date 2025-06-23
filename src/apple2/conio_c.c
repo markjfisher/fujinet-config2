@@ -23,8 +23,10 @@ void hlinexy_c(unsigned char x, unsigned char y, unsigned char len, enum htype t
   }
 }
 
+// in unit tests, this is 1027 cycles, asm is 513
 void vlinexy_c(unsigned char x, unsigned char y, unsigned char len, bool right)
 {
+  uint8_t v;
   while (len--) {
     cputcxy(x, y++, vchar[lower][right]);
   }
