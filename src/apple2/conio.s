@@ -16,47 +16,61 @@
         .include    "conio.inc"
 
 _hlinexy_asm:
+        ; save the pointer to params in ptr3
+        sta     ptr3
+        stx     ptr3+1
+        
         ; always call gotoxy, but we may not put any chars to screen.
-        lda     _params + hlinexy_params::x_v
+        ldy     #hlinexy_params::x_v
+        lda     (ptr3), y
         jsr     pusha
-        lda     _params + hlinexy_params::y_v
+        ldy     #hlinexy_params::y_v
+        lda     (ptr3), y
         jsr     _gotoxy
 
-        lda     _params + hlinexy_params::len
+        ldy     #hlinexy_params::len
+        lda     (ptr3), y
         bne     :+
         rts
 
+        ; keep the len value to save doing more indirect lookups
+:       sta     tmp_len
+
         ; get the value we want to write to screen
-:       lda     #<hchar_upper
+        lda     #<hchar_upper
         sta     ptr1
         lda     #>hchar_upper
         sta     ptr1+1
-        ldy     #$00
-
+        
         ; need to check if lower is set for which offset to use
+        ldx     #$00                                    ; assume upper case offset
         lda     _lower
         beq     using_upper
-        ldy     #$3
+        ldx     #$03                                    ; lower case offset
 
 using_upper:
-        ; add the type offset so we point to the correct element in the hchar_* tables
-        tya
+        ; X now contains table offset (0 or 3)
+        stx     tmp1                                    ; temporarily save table offset
+        ; get the type from params and add to table offset
+        ldy     #hlinexy_params::type
+        lda     (ptr3), y
         clc
-        adc     _params + hlinexy_params::type
+        adc     tmp1                                    ; add table offset to type
         tay
 
         lda     (ptr1), y                               ; contains the upper/lower offset, and the type offset
-        sta     _params + hlinexy_params::x_v           ; reuse X as a save location for the writing value
-
+        
+        ; save the value
+        sta     tmp_val
 
         ; now write out using cputc for len bytes
-:
+hline_loop:
         jsr     _cputc
 
-        dec     _params + hlinexy_params::len
+        dec     tmp_len
         beq     done
-        lda     _params + hlinexy_params::x_v           ; restore the value for cputc, never 0
-        bne     :-
+        lda     tmp_val
+        bne     hline_loop
 
 done:
         rts
@@ -176,6 +190,10 @@ iputsxy_output:
         
 iputsxy_done:
         rts
+
+.bss
+tmp_val:        .res 1
+tmp_len:        .res 1
 
 .data
 hchar_upper:    .byte $A0, '-', '_'

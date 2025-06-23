@@ -10,7 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 385, best C: 807
 run while CP != $t00_end
 
 assert $gxy_x = 3                       $$t00: gotoxy called with x=3$$
@@ -20,7 +20,7 @@ assert $cpc_vs ~ 0x(A0,A0,A0,A0,A0)     $$t00: cputc called with correct value$$
 
 run while CP != $t01
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 385, best C: 807
 run while CP != $t01_end
 
 assert $gxy_x = 3                       $$t01: gotoxy called with x=3$$
@@ -30,7 +30,7 @@ assert $cpc_vs ~ "-----"                $$t01: cputc called with correct value$$
 
 run while CP != $t02
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 385, best C: 807
 run while CP != $t02_end
 
 assert $gxy_x = 3                       $$t02: gotoxy called with x=3$$
@@ -40,7 +40,7 @@ assert $cpc_vs ~ "_____"                $$t02: cputc called with correct value$$
 
 run while CP != $t10
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 386, best C: 807
 run while CP != $t10_end
 
 assert $gxy_x = 3                       $$t10: gotoxy called with x=3$$
@@ -50,7 +50,7 @@ assert $cpc_vs ~ 0x(DC,DC,DC,DC,DC)     $$t10: cputc called with correct value$$
 
 run while CP != $t11
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 386, best C: 807
 run while CP != $t11_end
 
 assert $gxy_x = 3                       $$t11: gotoxy called with x=3$$
@@ -60,7 +60,7 @@ assert $cpc_vs ~ 0x(D3,D3,D3,D3,D3)     $$t11: cputc called with correct value$$
 
 run while CP != $t12
 registers set cycle_count = 0
-// asm: 356, best C: 807
+// asm: 386, best C: 807
 run while CP != $t12_end
 
 assert $gxy_x = 3                       $$t12: gotoxy called with x=3$$
@@ -70,7 +70,7 @@ assert $cpc_vs ~ "_____"                $$t12: cputc called with correct value$$
 
 run while CP != $t1
 registers set cycle_count = 0
-// asm: 112, best C: 415 without compromising usual runners
+// asm: 131, best C: 415 without compromising usual runners
 run while CP != $t1_end
 
 assert $gxy_x = 3                       $$t1: gotoxy called with x=3$$

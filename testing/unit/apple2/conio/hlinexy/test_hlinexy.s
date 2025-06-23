@@ -56,6 +56,8 @@ _main:
         sta     _params + hlinexy_params::type
 
 t00:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t00_end:
 
@@ -75,6 +77,8 @@ t00_end:
         sta     _params + hlinexy_params::type
 
 t01:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t01_end:
 
@@ -94,6 +98,8 @@ t01_end:
         sta     _params + hlinexy_params::type
 
 t02:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t02_end:
 
@@ -114,6 +120,8 @@ t02_end:
         sta     _params + hlinexy_params::type
 
 t10:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t10_end:
 
@@ -134,6 +142,8 @@ t10_end:
         sta     _params + hlinexy_params::type
 
 t11:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t11_end:
 
@@ -154,6 +164,8 @@ t11_end:
         sta     _params + hlinexy_params::type
 
 t12:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t12_end:
 
@@ -172,6 +184,8 @@ t12_end:
         stx     _params + hlinexy_params::y_v
 
 t1:
+        lda     #<_params
+        ldx     #>_params
         jsr     _hlinexy_asm
 t1_end:
 
