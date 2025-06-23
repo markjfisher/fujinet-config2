@@ -10,6 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
+// asm: 271, c: 342
 run while CP != $t00_end
 
 assert $gxy_calls = 1                   $$t00: gotoxy called once$$

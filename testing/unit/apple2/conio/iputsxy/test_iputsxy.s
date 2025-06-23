@@ -33,6 +33,7 @@
 
 .import _iputsxy_asm
 .import popa
+.import upset_zp
 
 .import _params
 .import _lower
@@ -178,15 +179,14 @@ _gotoxy:
         jsr     popa
         sta     gxy_x_values, x
         inc     gxy_calls
-
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture A value cputc was called with, and index / count of calls
 _cputc:
         ldx     cpc_idx
         sta     cpc_vs, x
         inc     cpc_idx
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture string pointer cputs was called with
 _cputs:
@@ -195,17 +195,17 @@ _cputs:
         txa
         sta     cps_strings_x, y    ; high byte of string pointer (X)
         inc     cps_calls
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture reverse video calls
 _revers:
         ldx     rev_calls
         sta     rev_values, x
         inc     rev_calls
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _cputcxy:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 .data
 test_str1:      .asciiz "Hello"

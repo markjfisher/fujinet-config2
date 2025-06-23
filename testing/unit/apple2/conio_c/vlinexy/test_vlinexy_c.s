@@ -26,6 +26,7 @@
 .import _vlinexy_c
 .import popa
 .import pusha
+.import upset_zp
 
 .code
 _main:
@@ -145,20 +146,19 @@ _cputcxy:
         jsr     popa  
         sta     cxy_x_values, x         ; save x (1st param)
         inc     cxy_calls
-
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _cputc:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _gotoxy:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _revers:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _cputs:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 .bss
 ; capture the number of cputcxy calls

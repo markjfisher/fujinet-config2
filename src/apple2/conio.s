@@ -20,6 +20,14 @@ _hlinexy_asm:
         sta     ptr3
         stx     ptr3+1
         
+        ; extract length and type before calling any cc65 functions
+        ldy     #hlinexy_params::len
+        lda     (ptr3), y
+        sta     tmp_len                                ; save length before ptr3 gets corrupted
+        ldy     #hlinexy_params::type
+        lda     (ptr3), y
+        sta     tmp_x                                  ; save type before ptr3 gets corrupted
+        
         ; always call gotoxy, but we may not put any chars to screen.
         ldy     #hlinexy_params::x_v
         lda     (ptr3), y
@@ -28,16 +36,14 @@ _hlinexy_asm:
         lda     (ptr3), y
         jsr     _gotoxy
 
-        ldy     #hlinexy_params::len
-        lda     (ptr3), y
+        ; check if length is zero (no characters to draw)
+        lda     tmp_len
         bne     :+
         rts
 
-        ; keep the len value to save doing more indirect lookups
-:       sta     tmp_len
-
+        ; length is non-zero, continue with character drawing
         ; get the value we want to write to screen
-        lda     #<hchar_upper
+:       lda     #<hchar_upper
         sta     ptr1
         lda     #>hchar_upper
         sta     ptr1+1
@@ -51,9 +57,8 @@ _hlinexy_asm:
 using_upper:
         ; X now contains table offset (0 or 3)
         stx     tmp1                                    ; temporarily save table offset
-        ; get the type from params and add to table offset
-        ldy     #hlinexy_params::type
-        lda     (ptr3), y
+        ; get the type from saved value and add to table offset
+        lda     tmp_x                                   ; get saved type value
         clc
         adc     tmp1                                    ; add table offset to type
         tay
@@ -65,11 +70,10 @@ using_upper:
 
         ; now write out using cputc for len bytes
 hline_loop:
+        lda     tmp_val
         jsr     _cputc
 
         dec     tmp_len
-        beq     done
-        lda     tmp_val
         bne     hline_loop
 
 done:
@@ -80,24 +84,22 @@ _vlinexy_asm:
         sta     ptr3
         stx     ptr3+1
         
-        ; check if length is zero first
+        ; extract all needed values before calling any cc65 functions
         ldy     #vlinexy_params::len
         lda     (ptr3), y
-        bne     vline_start
-        rts
-
-vline_start:
-        ; copy length to temp storage
-        sta     tmp_len
+        bne     :+
+        rts                                             ; zero length, return immediately
         
-        ; copy x and y values to temp storage for efficient access
+:       sta     tmp_len                                 ; save length
         ldy     #vlinexy_params::x_v
         lda     (ptr3), y
-        sta     tmp1                                    ; tmp1 = x_v
-        ; ldy     #vlinexy_params::y_v
-        iny
+        sta     tmp_x                                   ; save x position
+        ldy     #vlinexy_params::y_v
         lda     (ptr3), y
-        sta     tmp2                                    ; tmp2 = y_v (will be incremented)
+        sta     tmp_y                                   ; save y position (will be incremented)
+        ldy     #vlinexy_params::right
+        lda     (ptr3), y
+        sta     tmp2                                    ; save right flag on stack temporarily
         
         ; get the value we want to write to screen
         lda     #<vchar_upper
@@ -112,12 +114,11 @@ vline_start:
         ldx     #$02                                    ; lower case offset (vchar table has 2 entries per row)
 
 vline_using_upper:
-        ; get the right flag from params and add to table offset
-        ldy     #vlinexy_params::right
-        lda     (ptr3), y
-        stx     tmp3                                    ; temporarily save table offset
+        stx     tmp1                                    ; temporarily save table offset
+        ; get the right flag and add to table offset
+        lda     tmp2                                    ; restore right flag
         clc
-        adc     tmp3                                    ; add table offset to right flag
+        adc     tmp1                                    ; add table offset to right flag
         tay
 
         lda     (ptr1), y                               ; get the character to write
@@ -125,9 +126,9 @@ vline_using_upper:
 
 vline_loop:
         ; position cursor at current x,y
-        lda     tmp1                                    ; x position (constant)
+        lda     tmp_x                                   ; x position (constant)
         jsr     pusha
-        lda     tmp2                                    ; current y position
+        lda     tmp_y                                   ; current y position
         jsr     _gotoxy
 
         ; write the character
@@ -135,7 +136,7 @@ vline_loop:
         jsr     _cputc
 
         ; increment y position and decrement length
-        inc     tmp2
+        inc     tmp_y
         dec     tmp_len
         bne     vline_loop
 
@@ -145,8 +146,16 @@ _iputsxy_asm:
         ; save the pointer to params in ptr3
         sta     ptr3
         stx     ptr3+1
+
+        ; extract string pointer before calling any cc65 functions
+        ldy     #iputsxy_params::str_ptr
+        lda     (ptr3), y
+        sta     tmp_x                                   ; save string pointer low byte
+        iny
+        lda     (ptr3), y
+        sta     tmp_y                                   ; save string pointer high byte
         
-        ; always call gotoxy first
+        ; always call gotoxy
         ldy     #iputsxy_params::x_v
         lda     (ptr3), y
         jsr     pusha
@@ -155,10 +164,8 @@ _iputsxy_asm:
         jsr     _gotoxy
 
         ; check if string pointer is null
-        ldy     #iputsxy_params::str_ptr
-        lda     (ptr3), y
-        iny
-        ora     (ptr3), y
+        lda     tmp_x
+        ora     tmp_y
         bne     :+
         rts                                             ; null pointer, return
 
@@ -170,13 +177,9 @@ _iputsxy_asm:
         lda     #$01
         jsr     _revers                                 ; revers(true)
         
-        ldy     #iputsxy_params::str_ptr
-        lda     (ptr3), y
-        sta     tmp1                                    ; save low byte
-        iny
-        lda     (ptr3), y                               ; get high byte
-        tax                                             ; high byte in X
-        lda     tmp1                                    ; low byte in A
+        ; use saved string pointer
+        lda     tmp_x                                   ; low byte in A
+        ldx     tmp_y                                   ; high byte in X
         jsr     _cputs                                  ; cputs(string)
         
         lda     #$00
@@ -185,17 +188,17 @@ _iputsxy_asm:
 
 iputsxy_lower:
         ; lower case mode - character by character processing
-        ; copy string pointer to ptr1 for easier access
-        ldy     #iputsxy_params::str_ptr
-        lda     (ptr3), y
-        sta     ptr1
-        iny
-        lda     (ptr3), y
-        sta     ptr1+1
-        
-        ldy     #$00
+        lda     #$00
+        sta     str_index                               ; start at index 0
 
 iputsxy_loop:
+        ; use stored string pointer each iteration
+        lda     tmp_x
+        sta     ptr1
+        lda     tmp_y
+        sta     ptr1+1
+        
+        ldy     str_index
         lda     (ptr1), y                               ; get character
         beq     iputsxy_done                            ; null terminator, done
         
@@ -216,17 +219,25 @@ iputsxy_add80:
         adc     #$80
         
 iputsxy_output:
-        jsr     _cputc                                  ; output modified character
+        jsr     _cputc                                  ; output modified character (corrupts ptr1, X, Y)
         
-        iny
-        bne     iputsxy_loop                            ; continue if y didn't wrap
+        ; increment string index for next character
+        inc     str_index
+        bne     iputsxy_loop                            ; continue processing
         
 iputsxy_done:
         rts
 
 .bss
-tmp_val:        .res 1
-tmp_len:        .res 1
+; Shared temporary variables (safe across cc65 calls since functions can't run concurrently)
+tmp_val:        .res 1      ; shared character/value storage
+tmp_len:        .res 1      ; shared length counter  
+tmp_x:          .res 1      ; x position storage for vlinexy
+tmp_y:          .res 1      ; y position storage for vlinexy
+; String processing variables for iputsxy_lower
+str_ptr_lo:     .res 1      ; string pointer low byte
+str_ptr_hi:     .res 1      ; string pointer high byte  
+str_index:      .res 1      ; current character index in string
 
 .data
 hchar_upper:    .byte $A0, '-', '_'

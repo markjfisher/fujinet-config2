@@ -30,6 +30,7 @@
 .import _hlinexy_c
 .import popa
 .import pusha
+.import upset_zp
 
 .code
 _main:
@@ -179,26 +180,25 @@ _gotoxy:
         sta     gxy_y
         jsr     popa
         sta     gxy_x
-
-        rts
+        jmp     upset_zp
 
         ; capture A value cputc was called with, and index / count of calls
 _cputc:
         ldx     cpc_idx
         sta     cpc_vs, x
         inc     cpc_idx
-        rts
+        jmp     upset_zp
 
 ; due to all the functions being in a single conio_c.c file, we need to
 ; mock all external functions, else the real conio functions are pulled in
 _cputcxy:
-        rts
+        jmp     upset_zp
 
 _cputs:
-        rts
+        jmp     upset_zp
 
 _revers:
-        rts
+        jmp     upset_zp
 
 .bss
 gxy_x:          .res 1

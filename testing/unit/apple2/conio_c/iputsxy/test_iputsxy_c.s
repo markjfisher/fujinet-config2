@@ -36,6 +36,7 @@
 .import _iputsxy_c
 .import popa
 .import pusha
+.import upset_zp
 
 .code
 _main:
@@ -162,15 +163,14 @@ _gotoxy:
         jsr     popa
         sta     gxy_x_values, x
         inc     gxy_calls
-
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture A value cputc was called with, and index / count of calls
 _cputc:
         ldx     cpc_idx
         sta     cpc_vs, x
         inc     cpc_idx
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture string pointer cputs was called with
 _cputs:
@@ -179,19 +179,19 @@ _cputs:
         txa
         sta     cps_strings_x, y    ; high byte of string pointer (X)
         inc     cps_calls
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture reverse video calls
 _revers:
         ldx     rev_calls
         sta     rev_values, x
         inc     rev_calls
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 ; due to all the functions being in a single conio_c.c file, we need to
 ; mock all external functions, else the real conio functions are pulled in
 _cputcxy:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 .data
 test_str1:      .asciiz "Hello"

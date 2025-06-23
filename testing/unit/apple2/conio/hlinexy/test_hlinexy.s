@@ -27,6 +27,7 @@
 
 .import _hlinexy_asm
 .import popa
+.import upset_zp
 
 .import _params
 .import _lower
@@ -199,24 +200,23 @@ _gotoxy:
         sta     gxy_y
         jsr     popa
         sta     gxy_x
-
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
         ; capture A value cputc was called with, and index / count of calls
 _cputc:
         ldx     cpc_idx
         sta     cpc_vs, x
         inc     cpc_idx
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _cputs:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _cputcxy:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 _revers:
-        rts
+        jmp     upset_zp                                ; upset zero page to catch bugs
 
 .bss
 gxy_x:          .res 1
