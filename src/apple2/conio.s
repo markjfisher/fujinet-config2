@@ -76,64 +76,89 @@ done:
         rts
 
 _vlinexy_asm:
+        ; save the pointer to params in ptr3
+        sta     ptr3
+        stx     ptr3+1
+        
         ; check if length is zero first
-        lda     _params + vlinexy_params::len
+        ldy     #vlinexy_params::len
+        lda     (ptr3), y
         bne     vline_start
         rts
 
 vline_start:
+        ; copy length to temp storage
+        sta     tmp_len
+        
+        ; copy x and y values to temp storage for efficient access
+        ldy     #vlinexy_params::x_v
+        lda     (ptr3), y
+        sta     tmp1                                    ; tmp1 = x_v
+        ; ldy     #vlinexy_params::y_v
+        iny
+        lda     (ptr3), y
+        sta     tmp2                                    ; tmp2 = y_v (will be incremented)
+        
         ; get the value we want to write to screen
         lda     #<vchar_upper
         sta     ptr1
         lda     #>vchar_upper
         sta     ptr1+1
-        ldy     #$00
-
+        
         ; need to check if lower is set for which offset to use
+        ldx     #$00                                    ; assume upper case offset
         lda     _lower
         beq     vline_using_upper
-        ldy     #$02                                    ; vchar table has 2 entries per row (left, right)
+        ldx     #$02                                    ; lower case offset (vchar table has 2 entries per row)
 
 vline_using_upper:
-        ; add the right flag offset so we point to the correct element in the vchar_* tables
-        tya
+        ; get the right flag from params and add to table offset
+        ldy     #vlinexy_params::right
+        lda     (ptr3), y
+        stx     tmp3                                    ; temporarily save table offset
         clc
-        adc     _params + vlinexy_params::right
+        adc     tmp3                                    ; add table offset to right flag
         tay
 
-        lda     (ptr1), y                               ; contains the upper/lower offset, and the right offset
-        sta     _params + vlinexy_params::right         ; reuse right as a save location for the writing value
-
-        ; y_v already contains the starting y position, we'll increment it directly
+        lda     (ptr1), y                               ; get the character to write
+        sta     tmp_val                                 ; save character value
 
 vline_loop:
         ; position cursor at current x,y
-        lda     _params + vlinexy_params::x_v
+        lda     tmp1                                    ; x position (constant)
         jsr     pusha
-        lda     _params + vlinexy_params::y_v           ; current y position
+        lda     tmp2                                    ; current y position
         jsr     _gotoxy
 
         ; write the character
-        lda     _params + vlinexy_params::right         ; character to write
+        lda     tmp_val                                 ; character to write
         jsr     _cputc
 
         ; increment y position and decrement length
-        inc     _params + vlinexy_params::y_v
-        dec     _params + vlinexy_params::len
+        inc     tmp2
+        dec     tmp_len
         bne     vline_loop
 
         rts
 
 _iputsxy_asm:
+        ; save the pointer to params in ptr3
+        sta     ptr3
+        stx     ptr3+1
+        
         ; always call gotoxy first
-        lda     _params + iputsxy_params::x_v
+        ldy     #iputsxy_params::x_v
+        lda     (ptr3), y
         jsr     pusha
-        lda     _params + iputsxy_params::y_v
+        ldy     #iputsxy_params::y_v
+        lda     (ptr3), y
         jsr     _gotoxy
 
         ; check if string pointer is null
-        lda     _params + iputsxy_params::str_ptr
-        ora     _params + iputsxy_params::str_ptr + 1
+        ldy     #iputsxy_params::str_ptr
+        lda     (ptr3), y
+        iny
+        ora     (ptr3), y
         bne     :+
         rts                                             ; null pointer, return
 
@@ -145,8 +170,13 @@ _iputsxy_asm:
         lda     #$01
         jsr     _revers                                 ; revers(true)
         
-        lda     _params + iputsxy_params::str_ptr
-        ldx     _params + iputsxy_params::str_ptr + 1
+        ldy     #iputsxy_params::str_ptr
+        lda     (ptr3), y
+        sta     tmp1                                    ; save low byte
+        iny
+        lda     (ptr3), y                               ; get high byte
+        tax                                             ; high byte in X
+        lda     tmp1                                    ; low byte in A
         jsr     _cputs                                  ; cputs(string)
         
         lda     #$00
@@ -155,9 +185,12 @@ _iputsxy_asm:
 
 iputsxy_lower:
         ; lower case mode - character by character processing
-        lda     _params + iputsxy_params::str_ptr
+        ; copy string pointer to ptr1 for easier access
+        ldy     #iputsxy_params::str_ptr
+        lda     (ptr3), y
         sta     ptr1
-        lda     _params + iputsxy_params::str_ptr + 1
+        iny
+        lda     (ptr3), y
         sta     ptr1+1
         
         ldy     #$00

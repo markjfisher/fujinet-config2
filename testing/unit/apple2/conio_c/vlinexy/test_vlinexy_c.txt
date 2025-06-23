@@ -10,7 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
-// 1027 cycles, cf 513 for hand asm
+// asm: 547, c: 1027
 run while CP != $t00_end
 
 assert $cxy_calls = 3                   $$t00: cputcxy called 3 times$$
@@ -20,6 +20,7 @@ assert $cxy_char_values ~ "!!!"         $$t00: cputcxy called with correct value
 
 run while CP != $t01
 registers set cycle_count = 0
+// asm: 547, c: ???
 run while CP != $t01_end
 
 assert $cxy_calls = 3                   $$t01: cputcxy called 3 times$$
@@ -29,6 +30,7 @@ assert $cxy_char_values ~ "!!!"         $$t01: cputcxy called with correct value
 
 run while CP != $t10
 registers set cycle_count = 0
+// asm: 548, c: ???
 run while CP != $t10_end
 
 assert $cxy_calls = 3                   $$t10: cputcxy called 3 times$$
@@ -38,6 +40,7 @@ assert $cxy_char_values ~ 0x(DA,DA,DA)  $$t10: cputcxy called with correct value
 
 run while CP != $t11
 registers set cycle_count = 0
+// asm: 548, c: ???
 run while CP != $t11_end
 
 assert $cxy_calls = 3                   $$t11: cputcxy called 3 times$$
@@ -47,6 +50,7 @@ assert $cxy_char_values ~ 0x(DF,DF,DF)  $$t11: cputcxy called with correct value
 
 run while CP != $t1
 registers set cycle_count = 0
+// asm: 31, c: ???
 run while CP != $t1_end
 
 assert $cxy_calls = 0                   $$t1: cputcxy called 0 times$$ 

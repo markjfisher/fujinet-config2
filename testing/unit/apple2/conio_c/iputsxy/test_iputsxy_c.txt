@@ -10,7 +10,7 @@ run init until CP = $_main
 run $_main while CP != $t00
 
 registers set cycle_count = 0
-// asm: 235, c: 342
+// asm: 271, c: 342
 run while CP != $t00_end
 
 assert $gxy_calls = 1                   $$t00: gotoxy called once$$
@@ -26,7 +26,7 @@ assert $cpc_idx = 0                     $$t00: cputc not called$$
 
 run while CP != $t01
 registers set cycle_count = 0
-// asm: 235, c: 342
+// asm: 271, c: 342
 run while CP != $t01_end
 
 assert $gxy_calls = 1                   $$t01: gotoxy called once$$
@@ -40,7 +40,7 @@ assert $cpc_idx = 0                     $$t01: cputc not called$$
 
 run while CP != $t10
 registers set cycle_count = 0
-// asm: 586, c: 2397
+// asm: 614, c: 2397
 run while CP != $t10_end
 
 assert $gxy_calls = 1                   $$t10: gotoxy called once$$
@@ -53,7 +53,7 @@ assert $cpc_vs ~ 0x(94,E5,F3,F4,80,81,82,83) $$t10: T=0x94, e=0xE5, s=0xF3, t=0x
 
 run while CP != $t11
 registers set cycle_count = 0
-// asm: 430, c: 1644
+// asm: 458, c: 1644
 run while CP != $t11_end
 
 assert $gxy_calls = 1                   $$t11: gotoxy called once$$
@@ -66,7 +66,7 @@ assert $cpc_vs ~ 0x(81,82,83,84,85)     $$t11: A=0x81, B=0x82, C=0x83, D=0x84, E
 
 run while CP != $t1
 registers set cycle_count = 0
-// asm: 128, c: 342
+// asm: 150, c: 342
 run while CP != $t1_end
 
 // unlike the ASM version, the C version still calls lots of functions without testing data

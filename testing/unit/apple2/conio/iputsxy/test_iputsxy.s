@@ -64,6 +64,8 @@ _main:
         sta     _lower
 
 t00:
+        lda     #<_params
+        ldx     #>_params
         jsr     _iputsxy_asm
 t00_end:
 
@@ -86,6 +88,8 @@ t00_end:
         sta     _lower
 
 t01:
+        lda     #<_params
+        ldx     #>_params
         jsr     _iputsxy_asm
 t01_end:
 
@@ -109,6 +113,8 @@ t01_end:
         sta     _lower
 
 t10:
+        lda     #<_params
+        ldx     #>_params
         jsr     _iputsxy_asm
 t10_end:
 
@@ -132,6 +138,8 @@ t10_end:
         sta     _lower
 
 t11:
+        lda     #<_params
+        ldx     #>_params
         jsr     _iputsxy_asm
 t11_end:
 
@@ -153,6 +161,8 @@ t11_end:
         sta     _lower
 
 t1:
+        lda     #<_params
+        ldx     #>_params
         jsr     _iputsxy_asm
 t1_end:
 

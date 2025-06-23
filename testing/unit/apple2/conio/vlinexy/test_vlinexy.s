@@ -54,6 +54,8 @@ _main:
         sta     _params + vlinexy_params::right
 
 t00:
+        lda     #<_params
+        ldx     #>_params
         jsr     _vlinexy_asm
 t00_end:
 
@@ -74,6 +76,8 @@ t00_end:
         sta     _params + vlinexy_params::right
 
 t01:
+        lda     #<_params
+        ldx     #>_params
         jsr     _vlinexy_asm
 t01_end:
 
@@ -95,6 +99,8 @@ t01_end:
         sta     _params + vlinexy_params::right
 
 t10:
+        lda     #<_params
+        ldx     #>_params
         jsr     _vlinexy_asm
 t10_end:
 
@@ -116,6 +122,8 @@ t10_end:
         sta     _params + vlinexy_params::right
 
 t11:
+        lda     #<_params
+        ldx     #>_params
         jsr     _vlinexy_asm
 t11_end:
 
@@ -131,6 +139,8 @@ t11_end:
         stx     _params + vlinexy_params::y_v
 
 t1:
+        lda     #<_params
+        ldx     #>_params
         jsr     _vlinexy_asm
 t1_end:
 
