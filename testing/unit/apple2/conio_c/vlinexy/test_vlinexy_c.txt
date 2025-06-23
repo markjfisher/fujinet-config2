@@ -1,0 +1,52 @@
+marker $$testing vlinexy_c conio apple2$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t00
+
+registers set cycle_count = 0
+// 1333 cycles, cf 513 for hand asm
+run while CP != $t00_end
+
+assert $cxy_calls = 3                   $$t00: cputcxy called 3 times$$
+assert $cxy_x_values ~ 0x(03,03,03)     $$t00: cputcxy called with x=3 each time$$
+assert $cxy_y_values ~ 0x(04,05,06)     $$t00: cputcxy called with y=4,5,6$$
+assert $cxy_char_values ~ "!!!"         $$t00: cputcxy called with correct value (upper left)$$
+
+run while CP != $t01
+registers set cycle_count = 0
+run while CP != $t01_end
+
+assert $cxy_calls = 3                   $$t01: cputcxy called 3 times$$
+assert $cxy_x_values ~ 0x(05,05,05)     $$t01: cputcxy called with x=5 each time$$
+assert $cxy_y_values ~ 0x(02,03,04)     $$t01: cputcxy called with y=2,3,4$$
+assert $cxy_char_values ~ "!!!"         $$t01: cputcxy called with correct value (upper right)$$
+
+run while CP != $t10
+registers set cycle_count = 0
+run while CP != $t10_end
+
+assert $cxy_calls = 3                   $$t10: cputcxy called 3 times$$
+assert $cxy_x_values ~ 0x(07,07,07)     $$t10: cputcxy called with x=7 each time$$
+assert $cxy_y_values ~ 0x(01,02,03)     $$t10: cputcxy called with y=1,2,3$$
+assert $cxy_char_values ~ 0x(DA,DA,DA)  $$t10: cputcxy called with correct value (lower left)$$
+
+run while CP != $t11
+registers set cycle_count = 0
+run while CP != $t11_end
+
+assert $cxy_calls = 3                   $$t11: cputcxy called 3 times$$
+assert $cxy_x_values ~ 0x(09,09,09)     $$t11: cputcxy called with x=9 each time$$
+assert $cxy_y_values ~ 0x(03,04,05)     $$t11: cputcxy called with y=3,4,5$$
+assert $cxy_char_values ~ 0x(DF,DF,DF)  $$t11: cputcxy called with correct value (lower right)$$
+
+run while CP != $t1
+registers set cycle_count = 0
+run while CP != $t1_end
+
+assert $cxy_calls = 0                   $$t1: cputcxy called 0 times$$ 

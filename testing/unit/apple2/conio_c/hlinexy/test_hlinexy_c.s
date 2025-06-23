@@ -21,6 +21,7 @@
 
 .export _gotoxy
 .export _cputc
+.export _cputcxy
 
 .import _lower
 
@@ -185,6 +186,12 @@ _cputc:
         sta     cpc_vs, x
         inc     cpc_idx
         rts
+
+; due to all the functions being in a single conio_c.c file, we need to
+; mock all external functions, else the real conio functions are pulled in
+_cputcxy:
+        rts
+
 
 .bss
 gxy_x:          .res 1

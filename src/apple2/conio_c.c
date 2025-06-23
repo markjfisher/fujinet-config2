@@ -22,3 +22,10 @@ void hlinexy_c(unsigned char x, unsigned char y, unsigned char len, enum htype t
     cputc(v);
   }
 }
+
+void vlinexy_c(unsigned char x, unsigned char y, unsigned char len, bool right)
+{
+  while (len--) {
+    cputcxy(x, y++, vchar[lower][right]);
+  }
+}
