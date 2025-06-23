@@ -27,7 +27,28 @@ void hlinexy_c(unsigned char x, unsigned char y, unsigned char len, enum htype t
 void vlinexy_c(unsigned char x, unsigned char y, unsigned char len, bool right)
 {
   uint8_t v;
+  v = vchar[lower][right];
   while (len--) {
-    cputcxy(x, y++, vchar[lower][right]);
+    cputcxy(x, y++, v);
+  }
+}
+
+void iputsxy_c(unsigned char x, unsigned char y, const char* s)
+{
+  gotoxy(x, y);
+  if (lower) {
+    char c;
+    while (c = *s++) {
+      if (c >= 0x40 && c <= 0x5F) {
+        c += 0x40;
+      } else {
+        c += 0x80;
+      }
+      cputc(c);
+    }
+  } else {
+    revers(true);
+    cputs(s);
+    revers(false);
   }
 }

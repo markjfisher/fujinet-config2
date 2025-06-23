@@ -18,6 +18,9 @@
 
 .export _gotoxy
 .export _cputc
+.export _cputcxy
+.export _cputs
+.export _revers
 
 .import _vlinexy_asm
 .import popa
@@ -152,6 +155,16 @@ _cputc:
         sta     cpc_vs, x
         inc     cpc_idx
         rts
+
+_cputs:
+        rts
+
+_cputcxy:
+        rts
+
+_revers:
+        rts
+
 
 .bss
 ; capture the number of gotoxy calls

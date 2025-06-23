@@ -1,0 +1,80 @@
+marker $$testing iputsxy_c conio_c apple2$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+run init until CP = $_main
+run $_main while CP != $t00
+
+registers set cycle_count = 0
+// asm: 235, c: 342
+run while CP != $t00_end
+
+assert $gxy_calls = 1                   $$t00: gotoxy called once$$
+assert $gxy_x_values = 5                $$t00: gotoxy called with x=5$$
+assert $gxy_y_values = 3                $$t00: gotoxy called with y=3$$
+assert $rev_calls = 2                   $$t00: revers called twice (true, false)$$
+assert $rev_values = 1                  $$t00: revers called with true first$$
+assert $rev_values+1 = 0                $$t00: revers called with false second$$
+assert $cps_calls = 1                   $$t00: cputs called once$$
+assert $cps_strings_a = <$test_str1     $$t00: cputs called with correct pointer (low byte)$$
+assert $cps_strings_x = >$test_str1     $$t00: cputs called with correct pointer (high byte)$$
+assert $cpc_idx = 0                     $$t00: cputc not called$$
+
+run while CP != $t01
+registers set cycle_count = 0
+// asm: 235, c: 342
+run while CP != $t01_end
+
+assert $gxy_calls = 1                   $$t01: gotoxy called once$$
+assert $gxy_x_values = 8                $$t01: gotoxy called with x=8$$
+assert $gxy_y_values = 6                $$t01: gotoxy called with y=6$$
+assert $rev_calls = 2                   $$t01: revers called twice (empty string)$$
+assert $cps_calls = 1                   $$t01: cputs called once (empty string)$$
+assert $cps_strings_a = <$empty_str     $$t01: cputs called with correct pointer (low byte)$$
+assert $cps_strings_x = >$empty_str     $$t01: cputs called with correct pointer (high byte)$$
+assert $cpc_idx = 0                     $$t01: cputc not called$$
+
+run while CP != $t10
+registers set cycle_count = 0
+// asm: 586, c: 2397
+run while CP != $t10_end
+
+assert $gxy_calls = 1                   $$t10: gotoxy called once$$
+assert $gxy_x_values = 2                $$t10: gotoxy called with x=2$$
+assert $gxy_y_values = 8                $$t10: gotoxy called with y=8$$
+assert $rev_calls = 0                   $$t10: revers not called (lower=true)$$
+assert $cps_calls = 0                   $$t10: cputs not called (lower=true)$$
+assert $cpc_idx = 8                     $$t10: cputc called 8 times for "Test@ABC"$$
+assert $cpc_vs ~ 0x(94,E5,F3,F4,80,81,82,83) $$t10: T=0x94, e=0xE5, s=0xF3, t=0xF4, @=0x80, A=0x81, B=0x82, C=0x83$$
+
+run while CP != $t11
+registers set cycle_count = 0
+// asm: 430, c: 1644
+run while CP != $t11_end
+
+assert $gxy_calls = 1                   $$t11: gotoxy called once$$
+assert $gxy_x_values = 1                $$t11: gotoxy called with x=1$$
+assert $gxy_y_values = 10               $$t11: gotoxy called with y=10$$
+assert $rev_calls = 0                   $$t11: revers not called (lower=true)$$
+assert $cps_calls = 0                   $$t11: cputs not called (lower=true)$$
+assert $cpc_idx = 5                     $$t11: cputc called 5 times for "ABCDE"$$
+assert $cpc_vs ~ 0x(81,82,83,84,85)     $$t11: A=0x81, B=0x82, C=0x83, D=0x84, E=0x85$$
+
+run while CP != $t1
+registers set cycle_count = 0
+// asm: 128, c: 342
+run while CP != $t1_end
+
+// unlike the ASM version, the C version still calls lots of functions without testing data
+assert $gxy_calls = 1                   $$t1: gotoxy called once (null pointer)$$
+assert $gxy_x_values = 12               $$t1: gotoxy called with x=12$$
+assert $gxy_y_values = 15               $$t1: gotoxy called with y=15$$
+assert $rev_calls = 2                   $$t1: revers called 2 times even with null string$$
+assert $cps_calls = 1                   $$t1: cputs called with null$$
+assert $cps_strings_a = 0               $$t01: cputs called with null byte low$$
+assert $cps_strings_x = 0               $$t01: cputs called with null byte high$$
+assert $cpc_idx = 0                     $$t1: cputc not called$$ 

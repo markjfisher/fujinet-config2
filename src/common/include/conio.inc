@@ -21,3 +21,9 @@
     len     .byte
     right   .byte
 .endstruct
+
+.struct iputsxy_params
+    x_v     .byte
+    y_v     .byte
+    str_ptr .word
+.endstruct

@@ -21,6 +21,9 @@
 
 .export _gotoxy
 .export _cputc
+.export _cputcxy
+.export _cputs
+.export _revers
 
 .import _hlinexy_asm
 .import popa
@@ -190,6 +193,15 @@ _cputc:
         ldx     cpc_idx
         sta     cpc_vs, x
         inc     cpc_idx
+        rts
+
+_cputs:
+        rts
+
+_cputcxy:
+        rts
+
+_revers:
         rts
 
 .bss

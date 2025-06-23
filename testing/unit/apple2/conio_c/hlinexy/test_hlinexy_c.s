@@ -22,6 +22,8 @@
 .export _gotoxy
 .export _cputc
 .export _cputcxy
+.export _cputs
+.export _revers
 
 .import _lower
 
@@ -192,6 +194,11 @@ _cputc:
 _cputcxy:
         rts
 
+_cputs:
+        rts
+
+_revers:
+        rts
 
 .bss
 gxy_x:          .res 1

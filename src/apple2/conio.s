@@ -1,8 +1,11 @@
         .export     _hlinexy_asm
         .export     _vlinexy_asm
+        .export     _iputsxy_asm
 
         .import     _cputc
         .import     _gotoxy
+        .import     _cputs
+        .import     _revers
         .import     pusha
         
         .import     _params
@@ -105,6 +108,73 @@ vline_loop:
         dec     _params + vlinexy_params::len
         bne     vline_loop
 
+        rts
+
+_iputsxy_asm:
+        ; always call gotoxy first
+        lda     _params + iputsxy_params::x_v
+        jsr     pusha
+        lda     _params + iputsxy_params::y_v
+        jsr     _gotoxy
+
+        ; check if string pointer is null
+        lda     _params + iputsxy_params::str_ptr
+        ora     _params + iputsxy_params::str_ptr + 1
+        bne     :+
+        rts                                             ; null pointer, return
+
+        ; check if lower case mode
+:       lda     _lower
+        bne     iputsxy_lower
+
+        ; upper case mode - use revers(true), cputs, revers(false)
+        lda     #$01
+        jsr     _revers                                 ; revers(true)
+        
+        lda     _params + iputsxy_params::str_ptr
+        ldx     _params + iputsxy_params::str_ptr + 1
+        jsr     _cputs                                  ; cputs(string)
+        
+        lda     #$00
+        jsr     _revers                                 ; revers(false)
+        rts
+
+iputsxy_lower:
+        ; lower case mode - character by character processing
+        lda     _params + iputsxy_params::str_ptr
+        sta     ptr1
+        lda     _params + iputsxy_params::str_ptr + 1
+        sta     ptr1+1
+        
+        ldy     #$00
+
+iputsxy_loop:
+        lda     (ptr1), y                               ; get character
+        beq     iputsxy_done                            ; null terminator, done
+        
+        ; check if character is in range 0x40-0x5F
+        cmp     #$40
+        bcc     iputsxy_add80                           ; < 0x40, add 0x80
+        cmp     #$60
+        bcs     iputsxy_add80                           ; >= 0x60, add 0x80
+        
+        ; character is 0x40-0x5F, add 0x40
+        clc
+        adc     #$40
+        jmp     iputsxy_output
+        
+iputsxy_add80:
+        ; character is not 0x40-0x5F, add 0x80
+        clc
+        adc     #$80
+        
+iputsxy_output:
+        jsr     _cputc                                  ; output modified character
+        
+        iny
+        bne     iputsxy_loop                            ; continue if y didn't wrap
+        
+iputsxy_done:
         rts
 
 .data
