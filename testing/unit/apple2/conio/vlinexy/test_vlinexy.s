@@ -22,7 +22,7 @@
 .export _cputs
 .export _revers
 
-.import _vlinexy_asm
+.import _vlinexy
 .import popa
 .import upset_zp
 
@@ -57,7 +57,7 @@ _main:
 t00:
         lda     #<_params
         ldx     #>_params
-        jsr     _vlinexy_asm
+        jsr     _vlinexy
 t00_end:
 
 ; simple call - upper case, right character
@@ -79,7 +79,7 @@ t00_end:
 t01:
         lda     #<_params
         ldx     #>_params
-        jsr     _vlinexy_asm
+        jsr     _vlinexy
 t01_end:
 
 ; simple call - lower case, left character
@@ -102,7 +102,7 @@ t01_end:
 t10:
         lda     #<_params
         ldx     #>_params
-        jsr     _vlinexy_asm
+        jsr     _vlinexy
 t10_end:
 
 ; simple call - lower case, right character
@@ -125,7 +125,7 @@ t10_end:
 t11:
         lda     #<_params
         ldx     #>_params
-        jsr     _vlinexy_asm
+        jsr     _vlinexy
 t11_end:
 
 ; no length call does not call cputc or gotoxy
@@ -142,7 +142,7 @@ t11_end:
 t1:
         lda     #<_params
         ldx     #>_params
-        jsr     _vlinexy_asm
+        jsr     _vlinexy
 t1_end:
 
         rts

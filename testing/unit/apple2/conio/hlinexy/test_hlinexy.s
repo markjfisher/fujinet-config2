@@ -25,7 +25,7 @@
 .export _cputs
 .export _revers
 
-.import _hlinexy_asm
+.import _hlinexy
 .import popa
 .import upset_zp
 
@@ -59,7 +59,7 @@ _main:
 t00:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t00_end:
 
 ; simple call
@@ -80,7 +80,7 @@ t00_end:
 t01:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t01_end:
 
 ; simple call
@@ -101,7 +101,7 @@ t01_end:
 t02:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t02_end:
 
 ; simple call
@@ -123,7 +123,7 @@ t02_end:
 t10:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t10_end:
 
 ; simple call
@@ -145,7 +145,7 @@ t10_end:
 t11:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t11_end:
 
 ; simple call
@@ -167,7 +167,7 @@ t11_end:
 t12:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t12_end:
 
 
@@ -187,7 +187,7 @@ t12_end:
 t1:
         lda     #<_params
         ldx     #>_params
-        jsr     _hlinexy_asm
+        jsr     _hlinexy
 t1_end:
 
         rts

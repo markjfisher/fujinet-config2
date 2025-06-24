@@ -31,7 +31,7 @@
 .export _cputs
 .export _revers
 
-.import _iputsxy_asm
+.import _iputsxy
 .import popa
 .import upset_zp
 
@@ -67,7 +67,7 @@ _main:
 t00:
         lda     #<_params
         ldx     #>_params
-        jsr     _iputsxy_asm
+        jsr     _iputsxy
 t00_end:
 
 ; simple call - upper case, empty string
@@ -91,7 +91,7 @@ t00_end:
 t01:
         lda     #<_params
         ldx     #>_params
-        jsr     _iputsxy_asm
+        jsr     _iputsxy
 t01_end:
 
 ; simple call - lower case, mixed character types
@@ -116,7 +116,7 @@ t01_end:
 t10:
         lda     #<_params
         ldx     #>_params
-        jsr     _iputsxy_asm
+        jsr     _iputsxy
 t10_end:
 
 ; simple call - lower case, all 0x40-0x5F range characters
@@ -141,7 +141,7 @@ t10_end:
 t11:
         lda     #<_params
         ldx     #>_params
-        jsr     _iputsxy_asm
+        jsr     _iputsxy
 t11_end:
 
 ; no length call with null pointer should not crash
@@ -164,7 +164,7 @@ t11_end:
 t1:
         lda     #<_params
         ldx     #>_params
-        jsr     _iputsxy_asm
+        jsr     _iputsxy
 t1_end:
 
         rts

@@ -5,7 +5,8 @@ configs:
 
 src_files:
   - ${WS_ROOT}/src/common/data.s
-  - ${WS_ROOT}/src/apple2/conio.s
+  - ${WS_ROOT}/src/apple2/conio/common.s
+  - ${WS_ROOT}/src/apple2/conio/vlinexy.s
   - test_vlinexy.s
 
 test_script: test_vlinexy.txt 
