@@ -3,7 +3,7 @@
         .import     _cputc
         .import     _gotoxy
         .import     pusha
-        
+
         .import     _lower
         .import     tmp_len
         .import     tmp_val
@@ -19,7 +19,7 @@ _hlinexy:
         ; save the pointer to params in ptr3
         sta     ptr3
         stx     ptr3+1
-        
+
         ; extract length and type before calling any cc65 functions
         ldy     #hlinexy_params::len
         lda     (ptr3), y
@@ -27,7 +27,7 @@ _hlinexy:
         ldy     #hlinexy_params::type
         lda     (ptr3), y
         sta     tmp_x                                  ; save type before ptr3 gets corrupted
-        
+
         ; always call gotoxy, but we may not put any chars to screen.
         ldy     #hlinexy_params::x_v
         lda     (ptr3), y
@@ -47,7 +47,7 @@ _hlinexy:
         sta     ptr1
         lda     #>hchar_upper
         sta     ptr1+1
-        
+
         ; need to check if lower is set for which offset to use
         ldx     #$00                                    ; assume upper case offset
         lda     _lower
@@ -63,7 +63,7 @@ using_upper:
         tay
 
         lda     (ptr1), y                               ; contains the upper/lower offset, and the type offset
-        
+
         ; save the value
         sta     tmp_val
 

@@ -3,7 +3,7 @@
         .import     _cputc
         .import     _gotoxy
         .import     pusha
-        
+
         .import     _lower
         .import     tmp_len
         .import     tmp_val
@@ -19,13 +19,13 @@ _vlinexy:
         ; save the pointer to params in ptr3
         sta     ptr3
         stx     ptr3+1
-        
+
         ; extract all needed values before calling any cc65 functions
         ldy     #vlinexy_params::len
         lda     (ptr3), y
         bne     :+
         rts                                             ; zero length, return immediately
-        
+
 :       sta     tmp_len                                 ; save length
         ldy     #vlinexy_params::x_v
         lda     (ptr3), y
@@ -36,13 +36,13 @@ _vlinexy:
         ldy     #vlinexy_params::right
         lda     (ptr3), y
         sta     tmp2                                    ; save right flag on stack temporarily
-        
+
         ; get the value we want to write to screen
         lda     #<vchar_upper
         sta     ptr1
         lda     #>vchar_upper
         sta     ptr1+1
-        
+
         ; need to check if lower is set for which offset to use
         ldx     #$00                                    ; assume upper case offset
         lda     _lower

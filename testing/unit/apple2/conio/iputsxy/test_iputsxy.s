@@ -51,7 +51,7 @@ _main:
         sta     _params + iputsxy_params::str_ptr
         lda     #>test_str1
         sta     _params + iputsxy_params::str_ptr + 1
-        
+
         lda     #$05
         sta     _params + iputsxy_params::x_v
         lda     #$03
@@ -63,6 +63,7 @@ _main:
         sta     cps_calls
         sta     rev_calls
         sta     _lower
+        sta     current_revers_state            ; reset to normal mode for test
 
 t00:
         lda     #<_params
@@ -75,7 +76,7 @@ t00_end:
         sta     _params + iputsxy_params::str_ptr
         lda     #>empty_str
         sta     _params + iputsxy_params::str_ptr + 1
-        
+
         lda     #$08
         sta     _params + iputsxy_params::x_v
         lda     #$06
@@ -87,6 +88,7 @@ t00_end:
         sta     cps_calls
         sta     rev_calls
         sta     _lower
+        sta     current_revers_state            ; reset to normal mode for test
 
 t01:
         lda     #<_params
@@ -99,7 +101,7 @@ t01_end:
         sta     _params + iputsxy_params::str_ptr
         lda     #>test_str2
         sta     _params + iputsxy_params::str_ptr + 1
-        
+
         lda     #$02
         sta     _params + iputsxy_params::x_v
         lda     #$08
@@ -110,6 +112,7 @@ t01_end:
         sta     cpc_idx
         sta     cps_calls
         sta     rev_calls
+        sta     current_revers_state            ; reset to normal mode for test
         lda     #$01
         sta     _lower
 
@@ -124,7 +127,7 @@ t10_end:
         sta     _params + iputsxy_params::str_ptr
         lda     #>test_str3
         sta     _params + iputsxy_params::str_ptr + 1
-        
+
         lda     #$01
         sta     _params + iputsxy_params::x_v
         lda     #$0A
@@ -135,6 +138,7 @@ t10_end:
         sta     cpc_idx
         sta     cps_calls
         sta     rev_calls
+        sta     current_revers_state            ; reset to normal mode for test
         lda     #$01
         sta     _lower
 
@@ -148,7 +152,7 @@ t11_end:
         lda     #$00
         sta     _params + iputsxy_params::str_ptr
         sta     _params + iputsxy_params::str_ptr + 1
-        
+
         lda     #$0C
         sta     _params + iputsxy_params::x_v
         lda     #$0F
@@ -160,6 +164,7 @@ t11_end:
         sta     cps_calls
         sta     rev_calls
         sta     _lower
+        sta     current_revers_state            ; reset to normal mode for test
 
 t1:
         lda     #<_params
@@ -197,12 +202,21 @@ _cputs:
         inc     cps_calls
         jmp     upset_zp                                ; upset zero page to catch bugs
 
-        ; capture reverse video calls
+        ; capture reverse video calls and return previous state
 _revers:
         ldx     rev_calls
         sta     rev_values, x
         inc     rev_calls
-        jmp     upset_zp                                ; upset zero page to catch bugs
+        
+        ; return previous reverse state (simulate cc65 behavior)
+        ldx     current_revers_state                    ; get current state to return
+        sta     current_revers_state                    ; store new state
+        txa
+        pha                                             ; return previous state in A
+        
+        jsr     upset_zp                                ; upset zero page to catch bugs
+        pla
+        rts
 
 _cputcxy:
         jmp     upset_zp                                ; upset zero page to catch bugs
@@ -212,6 +226,7 @@ test_str1:      .asciiz "Hello"
 test_str2:      .asciiz "Test@ABC"     ; mix of regular and 0x40-0x5F chars
 test_str3:      .asciiz "ABCDE"        ; all 0x40-0x5F range
 empty_str:      .asciiz ""
+current_revers_state: .byte 0           ; track current reverse state for mock (starts at 0)
 
 .bss
 ; capture the number of gotoxy calls

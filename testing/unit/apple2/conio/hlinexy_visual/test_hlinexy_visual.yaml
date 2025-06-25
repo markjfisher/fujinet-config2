@@ -1,0 +1,23 @@
+name: hlinexy visual tests
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_apple2.yaml
+
+src_files:
+  - ${WS_ROOT}/src/common/data.s
+  - ${WS_ROOT}/src/apple2/conio/common.s
+  - ${WS_ROOT}/src/apple2/conio/hlinexy.s
+  - ${UNIT_TEST_DIR}/base_configs/screen_mock.s
+  - test_hlinexy_visual.s
+
+# must be on separate lines
+asm_flags:
+  - "-Wa"
+  - "-DSIMPLE_GFX=1"
+
+# must be on separate lines
+c_flags:
+  - "-Wa"
+  - "-DSIMPLE_GFX=1"
+
+test_script: test_hlinexy_visual.txt 

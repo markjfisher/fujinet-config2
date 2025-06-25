@@ -140,7 +140,7 @@ t11_end:
         stx     cpc_idx
         inx
         stx     _lower
- 
+
         lda     #$02    ; BOTTOM
 
 t12:

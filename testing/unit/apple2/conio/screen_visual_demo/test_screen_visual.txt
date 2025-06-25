@@ -1,0 +1,210 @@
+marker $$Visual Screen Testing Demo$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+disable trace_logging
+run init until CP = $start_draw
+
+assert $screen_memory ~ "\
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        " $$Initial screen in blank in 10 lines$$
+
+enable trace_logging
+
+run while CP != $end_p01
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ ================================       \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        \
+                                        " $$end_p01: Screen matches after 1 operation$$
+
+run while CP != $end_p02
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ ================================       \
+ [                                      \
+ [                                      \
+ [                                      \
+ [                                      \
+ [                                      \
+                                        \
+                                        " $$end_p02: Screen matches after 2 operations$$
+
+run while CP != $end_p03
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ ================================       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+                                        \
+                                        " $$end_p03: Screen matches after 3 operations$$
+
+run while CP != $end_p04
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ ================================       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ ________________________________       \
+                                        " $$end_p04: Screen matches after 4 operations$$
+
+run while CP != $end_p05
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ ________________________________       \
+                                        " $$end_p05: Screen matches after 5 operations$$
+
+run while CP != $end_p06
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [ This is line 1 of content    ]       \
+ [                              ]       \
+ [                              ]       \
+ [                              ]       \
+ ________________________________       \
+                                        " $$end_p06: Screen matches after 6 operations$$
+
+run while CP != $end_p07
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [ This is line 1 of content    ]       \
+ [ This is line 2 of content    ]       \
+ [                              ]       \
+ [                              ]       \
+ ________________________________       \
+                                        " $$end_p07: Screen matches after 7 operations$$
+
+run while CP != $end_p08
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [ This is line 1 of content    ]       \
+ [ This is line 2 of content    ]       \
+ [ This is line 3 of content    ]       \
+ [                              ]       \
+ ________________________________       \
+                                        " $$end_p08: Screen matches after 8 operations$$
+
+run while CP != $end_p09
+assert $screen_memory ~ "\
+                                        \
+                                        \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [ This is line 1 of content    ]       \
+ [ This is line 2 of content    ]       \
+ [ This is line 3 of content    ]       \
+ [------------------------------]       \
+ ________________________________       \
+                                        " $$end_p09: Screen matches after 9 operations$$
+
+run while CP != $end_p10
+assert $screen_memory ~ "\
+                                        \
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  \
+ === TEST WIDGET ================       \
+ [                              ]       \
+ [ This is line 1 of content    ]       \
+ [ This is line 2 of content    ]       \
+ [ This is line 3 of content    ]       \
+ [------------------------------]       \
+ ________________________________       \
+                                        " $$end_p10: Screen matches after lowercase TOP line$$
+
+run while CP != $end_p11
+assert $screen_memory ~ "\
+                                        \
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  \
+{=== TEST WIDGET ================       \
+{[                              ]       \
+{[ This is line 1 of content    ]       \
+{[ This is line 2 of content    ]       \
+{[ This is line 3 of content    ]       \
+{[------------------------------]       \
+{________________________________       \
+{                                       \
+                                        " $$end_p11: Screen matches after lowercase LEFT vertical$$
+
+run while CP != $end_p12
+assert $screen_memory ~ "\
+                                        \
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  \
+{=== TEST WIDGET ================      }\
+{[                              ]      }\
+{[ This is line 1 of content    ]      }\
+{[ This is line 2 of content    ]      }\
+{[ This is line 3 of content    ]      }\
+{[------------------------------]      }\
+{________________________________      }\
+{                                      }\
+                                        " $$end_p12: Screen matches after lowercase RIGHT vertical$$
+
+run while CP != $end_p13
+assert $screen_memory ~ "\
+                                        \
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  \
+{=== TEST WIDGET ================      }\
+{[                              ]      }\
+{[ This is line 1 of content    ]      }\
+{[ Th++++++++++++++++++++++++++++      }\
+{[ This is line 3 of content    ]      }\
+{[------------------------------]      }\
+{________________________________      }\
+{                                      }\
+                                        " $$end_p13: Screen matches after lowercase MID line through content$$
+
+run while CP != $end_p14
+assert $screen_memory ~ "\
+                                        \
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  \
+{=== TEST WIDGET ================      }\
+{[                              ]      }\
+{[ This is line 1 of content    ]      }\
+{[ Th++++++++++++++++++++++++++++      }\
+{[ This is line 3 of content    ]      }\
+{[------------------------------]      }\
+{________________________________      }\
+{                                      }\
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " $$end_p14: Screen matches after lowercase BOTTOM line$$

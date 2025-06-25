@@ -1,0 +1,107 @@
+marker $$Systematic Character Transformation Test$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+disable trace_logging
+run init until CP = $start_test
+
+// Check initial blank screen
+assert $screen_memory+0 ~ "                                        " $$Initial screen line 0 is blank$$
+assert $screen_memory+80 ~ "                                        " $$Initial screen line 2 is blank$$
+
+enable trace_logging
+
+// Test string "Ab@1" character analysis:
+// A = 0x41 (0x40-0x5F range), b = 0x62 (>= 0x60), @ = 0x40 (0x40-0x5F range), 1 = 0x31 (< 0x40)
+
+run while CP != $test1_end
+// Test 1: iputsxy - upper mode, normal (iputsxy always inverse regardless of revers state)
+memory show $screen_memory 0x28
+// Expected: A=0x41->0xC1, b=0x62->0xE2, @=0x40->0xC0, 1=0x31->0xB1 (all +0x80 for inverse)
+assert $screen_memory+2 = 0xC1 $$test1: A upper iputsxy (0x41->0xC1)$$
+assert $screen_memory+3 = 0xE2 $$test1: b upper iputsxy (0x62->0xE2)$$
+assert $screen_memory+4 = 0xC0 $$test1: @ upper iputsxy (0x40->0xC0)$$
+assert $screen_memory+5 = 0xB1 $$test1: 1 upper iputsxy (0x31->0xB1)$$
+
+run while CP != $test2_end
+// Test 2: iputsxy - upper mode, reverse (iputsxy always inverse regardless of revers state)
+memory show $screen_memory 0x28
+// Expected: Same as test 1 - A=0x41->0xC1, b=0x62->0xE2, @=0x40->0xC0, 1=0x31->0xB1
+assert $screen_memory+8 = 0xC1 $$test2: A upper iputsxy reverse (0x41->0xC1)$$
+assert $screen_memory+9 = 0xE2 $$test2: b upper iputsxy reverse (0x62->0xE2)$$
+assert $screen_memory+10 = 0xC0 $$test2: @ upper iputsxy reverse (0x40->0xC0)$$
+assert $screen_memory+11 = 0xB1 $$test2: 1 upper iputsxy reverse (0x31->0xB1)$$
+
+run while CP != $test3_end
+// Test 3: iputsxy - lower mode, normal (character-by-character transformation)
+memory show $screen_memory 0x28
+// Expected: A=0x41->0x81 (+0x40), b=0x62->0xE2 (+0x80), @=0x40->0x80 (+0x40), 1=0x31->0xB1 (+0x80)
+assert $screen_memory+14 = 0x81 $$test3: A lower iputsxy (0x41->0x81)$$
+assert $screen_memory+15 = 0xE2 $$test3: b lower iputsxy (0x62->0xE2)$$
+assert $screen_memory+16 = 0x80 $$test3: @ lower iputsxy (0x40->0x80)$$
+assert $screen_memory+17 = 0xB1 $$test3: 1 lower iputsxy (0x31->0xB1)$$
+
+run while CP != $test4_end
+// Test 4: iputsxy - lower mode, reverse (cputc applies EOR #$80 due to reverse state)
+memory show $screen_memory 0x28
+// Expected: iputsxy transforms chars, then cputc applies EOR #$80 due to reverse=1
+// A=0x41->0x81, then 0x81 EOR 0x80 = 0x01
+// b=0x62->0xE2, then 0xE2 EOR 0x80 = 0x62  
+// @=0x40->0x80, then 0x80 EOR 0x80 = 0x00
+// 1=0x31->0xB1, then 0xB1 EOR 0x80 = 0x31
+assert $screen_memory+20 = 0x01 $$test4: A lower iputsxy reverse (0x41->0x81->0x01)$$
+assert $screen_memory+21 = 0x62 $$test4: b lower iputsxy reverse (0x62->0xE2->0x62)$$
+assert $screen_memory+22 = 0x00 $$test4: @ lower iputsxy reverse (0x40->0x80->0x00)$$
+assert $screen_memory+23 = 0x31 $$test4: 1 lower iputsxy reverse (0x31->0xB1->0x31)$$
+
+run while CP != $test5_end
+// Test 5: cputsxy - upper mode, normal (raw characters, no transformation)
+memory show $screen_memory+80 0x28
+// Expected: A=0x41, b=0x62, @=0x40, 1=0x31 (no transformation in normal mode)
+assert $screen_memory+82 = 0x41 $$test5: A upper cputsxy normal (0x41)$$
+assert $screen_memory+83 = 0x62 $$test5: b upper cputsxy normal (0x62)$$
+assert $screen_memory+84 = 0x40 $$test5: @ upper cputsxy normal (0x40)$$
+assert $screen_memory+85 = 0x31 $$test5: 1 upper cputsxy normal (0x31)$$
+
+run while CP != $test6_end
+// Test 6: cputsxy - upper mode, reverse (characters with high bit set)
+memory show $screen_memory+80 0x28
+// Expected: A=0x41->0xC1, b=0x62->0xE2, @=0x40->0xC0, 1=0x31->0xB1 (all +0x80 for reverse)
+assert $screen_memory+88 = 0xC1 $$test6: A upper cputsxy reverse (0x41->0xC1)$$
+assert $screen_memory+89 = 0xE2 $$test6: b upper cputsxy reverse (0x62->0xE2)$$
+assert $screen_memory+90 = 0xC0 $$test6: @ upper cputsxy reverse (0x40->0xC0)$$
+assert $screen_memory+91 = 0xB1 $$test6: 1 upper cputsxy reverse (0x31->0xB1)$$
+
+run while CP != $test7_end
+// Test 7: cputsxy - lower mode, normal (raw characters, no transformation)
+memory show $screen_memory+80 0x28
+// Expected: A=0x41, b=0x62, @=0x40, 1=0x31 (no transformation in normal mode)
+assert $screen_memory+94 = 0x41 $$test7: A lower cputsxy normal (0x41)$$
+assert $screen_memory+95 = 0x62 $$test7: b lower cputsxy normal (0x62)$$
+assert $screen_memory+96 = 0x40 $$test7: @ lower cputsxy normal (0x40)$$
+assert $screen_memory+97 = 0x31 $$test7: 1 lower cputsxy normal (0x31)$$
+
+run while CP != $test8_end
+// Test 8: cputsxy - lower mode, reverse (characters with high bit set)
+memory show $screen_memory+80 0x28
+// Expected: A=0x41->0xC1, b=0x62->0xE2, @=0x40->0xC0, 1=0x31->0xB1 (all +0x80 for reverse)
+assert $screen_memory+100 = 0xC1 $$test8: A lower cputsxy reverse (0x41->0xC1)$$
+assert $screen_memory+101 = 0xE2 $$test8: b lower cputsxy reverse (0x62->0xE2)$$
+assert $screen_memory+102 = 0xC0 $$test8: @ lower cputsxy reverse (0x40->0xC0)$$
+assert $screen_memory+103 = 0xB1 $$test8: 1 lower cputsxy reverse (0x31->0xB1)$$
+
+run while CP != $end
+
+// Verify spacing between tests
+assert $screen_memory+0 ~ "  " $$Line 0 starts with spaces$$
+assert $screen_memory+6 ~ "  " $$Space between test1 and test2$$
+assert $screen_memory+12 ~ "  " $$Space between test2 and test3$$
+assert $screen_memory+18 ~ "  " $$Space between test3 and test4$$
+assert $screen_memory+80 ~ "  " $$Line 2 starts with spaces$$
+assert $screen_memory+86 ~ "  " $$Space between test5 and test6$$
+assert $screen_memory+92 ~ "  " $$Space between test6 and test7$$
+assert $screen_memory+98 ~ "  " $$Space between test7 and test8$$ 

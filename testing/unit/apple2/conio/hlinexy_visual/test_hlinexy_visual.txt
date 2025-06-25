@@ -1,0 +1,41 @@
+marker $$Visual hlinexy test using screen memory assertions$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+disable trace_logging
+run init until CP = $start_draw
+
+enable trace_logging
+run while CP != $end
+
+// Check the complete screen state - this is the power of visual testing!
+assert $screen_memory ~ "\
+                                        \
+                                        \
+                                        \
+     ================                   \
+                                        \
+  ________________________________      \
+                                        \
+        ++++++++++++                    " $$Complete screen state is correct$$
+
+// Test individual lines to show granular assertions
+// Test line 1: TOP line at (5,3) with length 16
+assert $screen_memory+125 ~ "================" $$TOP line drawn correctly$$
+
+// Test line 2: BOTTOM line at (2,5) with length 32  
+assert $screen_memory+202 ~ "________________________________" $$BOTTOM line drawn correctly$$
+
+// Test line 3: MID line at (8,7) with length 12 (lowercase mode)
+assert $screen_memory+288 ~ "++++++++++++" $$MID line drawn correctly in lowercase$$
+
+// Test that the rest of the screen remains blank
+assert $screen_memory+0 ~ "     " $$First line starts with spaces$$
+assert $screen_memory+40 ~ "     " $$Second line starts with spaces$$
+assert $screen_memory+200 ~ "  " $$Line 5 starts correctly$$
+assert $screen_memory+240 ~ "        " $$Line 6 starts correctly$$
+assert $screen_memory+320 ~ "        " $$Line 8 starts with spaces$$ 

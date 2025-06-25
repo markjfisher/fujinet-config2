@@ -11,13 +11,22 @@ tmp_x:          .res 1      ; x position storage for vlinexy, also general tmp v
 tmp_y:          .res 1      ; y position storage for vlinexy, also general tmp value for pointers
 
 ; horizontal line drawing characters to use, indexed by TOP, MID, BOTTOM
+; vertical line drawing characters to use, indexed by LEFT, RIGHT
 .data
-hchar_upper:    .byte $A0, '-', '_'
-hchar_lower:    .byte $DC, $D3, '_'
 
-; vertical line drawing characters to use, indexed by LEFT,RIGHT
-vchar_upper:    .byte '!', '!'
-vchar_lower:    .byte $DA, $DF
+.ifdef SIMPLE_GFX
+; Simple ASCII characters for visual testing
+hchar_upper:    .byte '=', '-', '_'     ; TOP, MID, BOTTOM
+hchar_lower:    .byte '%', '+', '~'     ; TOP, MID, BOTTOM
+vchar_upper:    .byte '[', ']'          ; LEFT, RIGHT
+vchar_lower:    .byte '{', '}'          ; LEFT, RIGHT
+.else
+; Apple II specific characters for production
+hchar_upper:    .byte $A0, '-', '_'     ; TOP, MID, BOTTOM
+hchar_lower:    .byte $DC, $D3, '_'     ; TOP, MID, BOTTOM
+vchar_upper:    .byte '!', '!'          ; LEFT, RIGHT
+vchar_lower:    .byte $DA, $DF          ; LEFT, RIGHT
+.endif
 
 ;; NOTES for conio apple2 chars
 ;

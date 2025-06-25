@@ -5,7 +5,7 @@
         .import     _cputs
         .import     _revers
         .import     pusha
-        
+
         .import     _lower
         .import     tmp_val
         .import     tmp_x
@@ -26,7 +26,7 @@ _iputsxy:
         iny
         lda     (ptr3), y
         sta     tmp_y                                   ; save string pointer high byte
-        
+
         ; always call gotoxy
         ldy     #iputsxy_params::x_v
         lda     (ptr3), y
@@ -45,17 +45,20 @@ _iputsxy:
 :       lda     _lower
         bne     iputsxy_lower
 
-        ; upper case mode - use revers(true), cputs, revers(false)
+        ; upper case mode - preserve current reverse state
+        ; Call revers(true) and save the previous state it returns
         lda     #$01
-        jsr     _revers                                 ; revers(true)
-        
+        jsr     _revers                                 ; revers(true), returns previous state in A
+        sta     saved_revers                            ; save the previous state
+
         ; use saved string pointer
         lda     tmp_x                                   ; low byte in A
         ldx     tmp_y                                   ; high byte in X
         jsr     _cputs                                  ; cputs(string)
-        
-        lda     #$00
-        jmp     _revers                                 ; revers(false)
+
+        ; restore the original reverse state
+        lda     saved_revers
+        jmp     _revers                                 ; restore previous state, discard return value
         ; implicit rts
 
 iputsxy_lower:
@@ -69,33 +72,36 @@ iputsxy_loop:
         sta     ptr1
         lda     tmp_y
         sta     ptr1+1
-        
+
         ldy     tmp_val
         lda     (ptr1), y                               ; get character
         beq     iputsxy_done                            ; null terminator, done
-        
+
         ; check if character is in range 0x40-0x5F
         cmp     #$40
         bcc     iputsxy_add80                           ; < 0x40, add 0x80
         cmp     #$60
         bcs     iputsxy_add80                           ; >= 0x60, add 0x80
-        
+
         ; character is 0x40-0x5F, add 0x40
         clc
         adc     #$40
         bne     iputsxy_output
-        
+
 iputsxy_add80:
         ; character is not 0x40-0x5F, add 0x80
         clc
         adc     #$80
-        
+
 iputsxy_output:
         jsr     _cputc                                  ; output modified character (corrupts ptr1, X, Y)
-        
+
         ; increment string index for next character
         inc     tmp_val
         bne     iputsxy_loop                            ; continue processing
-        
+
 iputsxy_done:
         rts
+
+.bss
+saved_revers:   .res 1                                  ; save previous reverse state
