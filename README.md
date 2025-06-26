@@ -1,8 +1,7 @@
 # fujinet-config2
 
 This is a new conio based multi-platform config app in the style of config-ng.
-It's inspired from Oliver Schmidt's poc rerendering a config-ng screen with apple2 graphics using
-mouse font text with cross-apple2 support.
+It's inspired from Oliver Schmidt's poc rerendering a config-ng screen with apple2 graphics using mouse font text with cross-apple2 support.
 
 ## building
 

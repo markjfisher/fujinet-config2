@@ -1,0 +1,20 @@
+name: draw window assembly function tests
+
+configs:
+  - ${UNIT_TEST_DIR}/base_configs/base_test_apple2.yaml
+
+src_files:
+  - ${WS_ROOT}/src/common/data.s
+  - ${WS_ROOT}/src/apple2/conio/common.s
+  - ${WS_ROOT}/src/apple2/conio/hlinexy.s
+  - ${WS_ROOT}/src/apple2/conio/vlinexy.s
+  - ${WS_ROOT}/src/apple2/conio/draw_window.s
+  - ${UNIT_TEST_DIR}/base_configs/screen_mock.s
+  - test_draw_window.s
+
+# must be on separate lines
+asm_flags:
+  - "-Wa"
+  - "-DSIMPLE_GFX=1"
+
+test_script: test_draw_window.txt 

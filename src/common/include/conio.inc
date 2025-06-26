@@ -27,3 +27,11 @@
     y_v     .byte
     str_ptr .word
 .endstruct
+
+.struct draw_window_params
+    x_v     .byte
+    y_v     .byte
+    width   .byte
+    height  .byte
+    title   .word
+.endstruct

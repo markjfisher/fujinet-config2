@@ -1,0 +1,77 @@
+marker $$Window Drawing Visual Test (Assembly Version)$$
+
+memory load apple "${BINARY_PATH}"
+symbols load "${SYMBOLS_PATH}"
+
+// allow 'init' to work on apple2
+memory write $__V_RESET_LOAD__ $start
+
+disable trace_logging
+run init until CP = $start_test
+enable trace_logging
+
+registers set cycle_count = 0
+run while CP != $window1_end
+;memory show $screen_memory 240 40
+assert $screen_memory ~ "\
+                                        \
+  {%Menu%}                              \
+  {      }                              \
+  {      }                              \
+  {~~~~~~}                              \
+                                        " $$Window1: Small window with 'Menu' title$$
+registers show cycle_count
+
+run while CP != $window2_end
+;memory show $screen_memory 360 40
+assert $screen_memory ~ "\
+                                        \
+  {%Menu%}                              \
+  {      }                              \
+  {      }{%Settings%}                  \
+  {~~~~~~}{          }                  \
+          {          }                  \
+          {          }                  \
+          {~~~~~~~~~~}                  \
+                                        " $$Window2: Medium window with 'Settings' title$$
+registers show cycle_count
+
+run while CP != $window3_end
+;memory show $screen_memory 560 40
+assert $screen_memory ~ "\
+                                        \
+  {%Menu%}                              \
+  {      }                              \
+  {      }{%Settings%}                  \
+  {~~~~~~}{          }                  \
+          {          }                  \
+          {          }                  \
+          {~~~~~~~~~~}                  \
+     {%%File Browser%%}                 \
+     {                }                 \
+     {                }                 \
+     {                }                 \
+     {                }                 \
+     {~~~~~~~~~~~~~~~~}                 \
+                                        " $$Window3: Large window with 'File Browser' title$$
+registers show cycle_count
+
+run while CP != $window4_end
+;memory show $screen_memory 560 40
+assert $screen_memory ~ "\
+                                        \
+  {%Menu%}                              \
+  {      }                              \
+  {      }{%Settings%}                  \
+  {~{%Overlap%%}     }                  \
+    {     {    }     }                  \
+    {     {    }     }                  \
+    {     {~~~~}~~~~~}                  \
+    {{%%File Br}wser%%}                 \
+    {~~~~~~~~~~}      }                 \
+     {                }                 \
+     {                }                 \
+     {                }                 \
+     {~~~~~~~~~~~~~~~~}                 \
+                                        " $$Window3: Overlapping windows$$
+registers show cycle_count
