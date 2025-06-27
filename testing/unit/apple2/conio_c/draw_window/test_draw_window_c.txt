@@ -64,14 +64,14 @@ assert $screen_memory ~ "\
   {      }                              \
   {      }{%Settings%}                  \
   {~{%Overlap%%}     }                  \
-    {     {    }     }                  \
-    {     {    }     }                  \
-    {     {~~~~}~~~~~}                  \
-    {{%%File Br}wser%%}                 \
+    {          }     }                  \
+    {          }     }                  \
+    {          }~~~~~}                  \
+    {          }wser%%}                 \
     {~~~~~~~~~~}      }                 \
      {                }                 \
      {                }                 \
      {                }                 \
      {~~~~~~~~~~~~~~~~}                 \
-                                        " $$Window3: Overlapping windows$$
+                                        " $$Window4: Overlapping windows$$
 registers show cycle_count

@@ -4,6 +4,7 @@
         .import     _vlinexy
         .import     _gotoxy
         .import     _cputs
+        .import     _cputc
         .import     pusha
 
         .import     tmp_val
@@ -27,6 +28,8 @@ draw_height:    .res 1                                  ; window height
 title_len:      .res 1                                  ; calculated title length
 title_start:    .res 1                                  ; calculated title start position
 title_ptr:      .res 2                                  ; save title pointer across function calls
+clear_row:      .res 1                                  ; current row for clearing interior
+clear_col:      .res 1                                  ; current column for clearing interior
 
 .code
 
@@ -166,6 +169,51 @@ skip_title:
         ldx     #>vline_params
         jsr     _vlinexy
 
+        ; Clear window interior (blank out contents)
+        ; for (i = 1; i < height - 1; i++)
+        lda     #1                                      ; start at row 1 (skip top border)
+        sta     clear_row
+
+clear_row_loop:
+        lda     clear_row
+        clc
+        adc     #1                                      ; i + 1
+        cmp     draw_height                             ; compare with height
+        bcs     clear_done                              ; if i+1 >= height, done (i < height-1)
+
+        ; gotoxy(x + 1, y + i);
+        lda     draw_x
+        clc
+        adc     #1                                      ; x + 1
+        jsr     pusha
+        lda     draw_y
+        clc
+        adc     clear_row                               ; y + i
+        jsr     _gotoxy
+
+        ; for (j = 0; j < width - 2; j++)
+        lda     #0
+        sta     clear_col
+
+clear_col_loop:
+        lda     clear_col
+        clc
+        adc     #2                                      ; j + 2
+        cmp     draw_width                              ; compare with width
+        bcs     clear_col_done                          ; if j+2 >= width, done (j < width-2)
+
+        ; cputc(' ');
+        lda     #' '
+        jsr     _cputc
+
+        inc     clear_col
+        bne     clear_col_loop
+
+clear_col_done:
+        inc     clear_row
+        bne     clear_row_loop
+
+clear_done:
         ; Draw bottom border: hlinexy_c(x+1, y + height - 1, width-2, BOTTOM);
         lda     draw_x
         clc
@@ -186,6 +234,4 @@ skip_title:
 
         lda     #<hline_params
         ldx     #>hline_params
-        jsr     _hlinexy
-
-        rts
+        jmp     _hlinexy

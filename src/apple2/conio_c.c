@@ -118,6 +118,15 @@ void draw_window_c(struct draw_window_params* params)
   vlinexy_c(x, y, height, false);           // left border
   vlinexy_c(x + width - 1, y, height, true); // right border  
   
+  // Clear window interior (blank out contents)
+  for (i = 1; i < height - 1; i++) {
+    uint8_t j;
+    gotoxy(x + 1, y + i);
+    for (j = 0; j < width - 2; j++) {
+      cputc(' ');
+    }
+  }
+  
   // Draw bottom border
   hlinexy_c(x+1, y + height - 1, width-2, BOTTOM);
 }
