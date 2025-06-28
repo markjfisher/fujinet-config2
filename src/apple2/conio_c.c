@@ -80,8 +80,8 @@ struct draw_window_params {
 };
 
 // In testing against the ASM version:
-//  C:   4 windows takes 60369 cycles
-//  ASM: 4 windows takes 33109 cycles
+//  C:   4 windows takes 60369 cycles -> 119,871 with blanking
+//  ASM: 4 windows takes 33109 cycles ->  59,317 with blanking
 // almost 2x slower.
 
 void draw_window_c(struct draw_window_params* params)
@@ -96,7 +96,7 @@ void draw_window_c(struct draw_window_params* params)
   uint8_t i;
 
   // Draw top border with title
-  hlinexy_c(x+1, y, width-2, TOP);
+  hlinexy_c(x + 1, y, width - 2, TOP);
   
   // Center the title in the top border
   if (title && *title) {
