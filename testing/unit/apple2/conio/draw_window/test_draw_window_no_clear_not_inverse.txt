@@ -13,6 +13,12 @@ enable trace_logging
 registers set cycle_count = 0
 run while CP != $window1_end
 ;memory show $screen_memory 240 40
+
+// This version uses non-inverse chars for title, and does
+// not clear the window contents.
+// Thus first 3 windows (non overlapping) look fine
+// and last window that overlaps does not clear its contents
+
 assert $screen_memory ~ "\
                                         \
   {%Menu%}                              \
@@ -24,6 +30,7 @@ registers show cycle_count
 
 run while CP != $window2_end
 ;memory show $screen_memory 360 40
+
 assert $screen_memory ~ "\
                                         \
   {%Menu%}                              \
@@ -38,6 +45,7 @@ registers show cycle_count
 
 run while CP != $window3_end
 ;memory show $screen_memory 560 40
+
 assert $screen_memory ~ "\
                                         \
   {%Menu%}                              \
@@ -58,20 +66,22 @@ registers show cycle_count
 
 run while CP != $window4_end
 ;memory show $screen_memory 560 40
+
+; overlap will not clear its window, so we see through to below
 assert $screen_memory ~ "\
                                         \
   {%Menu%}                              \
   {      }                              \
   {      }{%Settings%}                  \
   {~{%Overlap%%}     }                  \
-    {          }     }                  \
-    {          }     }                  \
-    {          }~~~~~}                  \
-    {          }wser%%}                 \
+    {     {    }     }                  \
+    {     {    }     }                  \
+    {     {~~~~}~~~~~}                  \
+    {{%%File Br}wser%%}                 \
     {~~~~~~~~~~}      }                 \
      {                }                 \
      {                }                 \
      {                }                 \
      {~~~~~~~~~~~~~~~~}                 \
-                                        " $$Window4: Overlapping windows$$
+                                        " $$Window4: Overlapping windows when not clearing contents$$
 registers show cycle_count

@@ -1,10 +1,23 @@
         .export     _draw_window
+        .export     hline_params
+        .export     vline_params
+        .export     isxy_params
+        .export     draw_x
+        .export     draw_y
+        .export     draw_width
+        .export     draw_height
+        .export     title_len
+        .export     title_start
+        .export     title_ptr
+        .export     inverse_title
+        .export     clear_window
 
         .import     _hlinexy
         .import     _vlinexy
         .import     _gotoxy
         .import     _cputs
         .import     _cputc
+        .import     _iputsxy
         .import     pusha
 
         .import     tmp_val
@@ -19,6 +32,7 @@
 ; parameter structures for drawing operations
 hline_params:   .tag hlinexy_params
 vline_params:   .tag vlinexy_params
+isxy_params:    .tag iputsxy_params
 
 ; variables for draw_window function
 draw_x:         .res 1                                  ; window x position
@@ -30,6 +44,8 @@ title_start:    .res 1                                  ; calculated title start
 title_ptr:      .res 2                                  ; save title pointer across function calls
 clear_row:      .res 1                                  ; current row for clearing interior
 clear_col:      .res 1                                  ; current column for clearing interior
+inverse_title:  .res 1
+clear_window:   .res 1
 
 .code
 
@@ -57,6 +73,12 @@ _draw_window:
         iny
         lda     (ptr3), y
         sta     title_ptr+1                             ; save title pointer high
+        ldy     #draw_window_params::inverse_title
+        lda     (ptr3), y
+        sta     inverse_title
+        ldy     #draw_window_params::clear_window
+        lda     (ptr3), y
+        sta     clear_window
 
         ; Draw top border with title
         ; hlinexy_c(x+1, y, width-2, TOP);
@@ -125,6 +147,27 @@ title_len_done:
         adc     #1                                      ; add 1 (x + 1)
         sta     title_start
 
+        lda     inverse_title
+        beq     not_inverse
+
+        ; setup params for iputsxy
+        lda     title_ptr
+        sta     isxy_params + iputsxy_params::str_ptr
+        lda     title_ptr+1
+        sta     isxy_params + iputsxy_params::str_ptr+1
+
+        lda     title_start
+        sta     isxy_params + iputsxy_params::x_v
+        lda     draw_y
+        sta     isxy_params + iputsxy_params::y_v
+
+        lda     #<isxy_params
+        ldx     #>isxy_params
+        jsr     _iputsxy
+        clc
+        bcc     skip_title
+
+not_inverse:
         ; gotoxy(title_start, y);
         lda     title_start
         jsr     pusha
@@ -168,6 +211,9 @@ skip_title:
         lda     #<vline_params
         ldx     #>vline_params
         jsr     _vlinexy
+
+        lda     clear_window
+        beq     clear_done
 
         ; Clear window interior (blank out contents)
         ; for (i = 1; i < height - 1; i++)

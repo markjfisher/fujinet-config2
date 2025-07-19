@@ -29,9 +29,11 @@
 .endstruct
 
 .struct draw_window_params
-    x_v     .byte
-    y_v     .byte
-    width   .byte
-    height  .byte
-    title   .word
+    x_v             .byte
+    y_v             .byte
+    width           .byte
+    height          .byte
+    title           .word
+    inverse_title   .byte
+    clear_window    .byte
 .endstruct

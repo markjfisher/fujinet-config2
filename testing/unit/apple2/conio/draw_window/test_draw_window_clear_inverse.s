@@ -24,7 +24,7 @@
 _main:
         lda     #$01
         sta     _lower
-        ; Initialize screen with spaces
+        ; Clear screen
         jsr     screen_init
 
 start_test:
@@ -73,6 +73,8 @@ window1_params:
         .byte   8                       ; width
         .byte   4                       ; height
         .word   window1_title           ; title
+        .byte   1                       ; inverse
+        .byte   1                       ; clear window
 
 window2_params:
         .byte   10                      ; x
@@ -80,6 +82,8 @@ window2_params:
         .byte   12                      ; width
         .byte   5                       ; height
         .word   window2_title           ; title
+        .byte   1                       ; inverse
+        .byte   1                       ; clear window
 
 window3_params:
         .byte   5                       ; x
@@ -87,10 +91,14 @@ window3_params:
         .byte   18                      ; width
         .byte   6                       ; height
         .word   window3_title           ; title 
+        .byte   1                       ; inverse
+        .byte   1                       ; clear window
 
 window4_params:
         .byte   4                       ; x
         .byte   4                       ; y
         .byte   12                      ; width
         .byte   6                       ; height
-        .word   window4_title           ; title 
+        .word   window4_title           ; title
+        .byte   1                       ; inverse
+        .byte   1                       ; clear window
