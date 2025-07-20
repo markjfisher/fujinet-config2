@@ -65,8 +65,8 @@ OBJECTS += $(OBJECTS_TG)
 # Ensure make recompiles parts it needs to if src files change
 DEPENDS := $(OBJECTS:.o=.d)
 
-ASFLAGS += --asm-include-dir src/common --asm-include-dir src/$(CURRENT_PLATFORM) --asm-include-dir src/current-target/$(CURRENT_TARGET)
-CFLAGS += --include-dir src/common --include-dir src/$(CURRENT_PLATFORM) --include-dir src/current-target/$(CURRENT_TARGET)
+ASFLAGS += --asm-include-dir src/common/include --asm-include-dir src/$(CURRENT_PLATFORM)/include --asm-include-dir src/current-target/$(CURRENT_TARGET)/include
+CFLAGS += --include-dir src/common/include --include-dir src/$(CURRENT_PLATFORM)/include --include-dir src/current-target/$(CURRENT_TARGET)/include
 
 ASFLAGS += --asm-include-dir $(SRCDIR)
 CFLAGS += --include-dir $(SRCDIR)
