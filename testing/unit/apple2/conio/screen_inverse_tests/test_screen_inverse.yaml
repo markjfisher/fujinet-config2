@@ -4,11 +4,11 @@ configs:
   - ${UNIT_TEST_DIR}/base_configs/base_test_apple2.yaml
 
 src_files:
-  - ${WS_ROOT}/src/common/data.s
   - ${WS_ROOT}/src/apple2/conio/common.s
   - ${WS_ROOT}/src/apple2/conio/iputsxy.s
   - ${UNIT_TEST_DIR}/base_configs/screen_mock.s
   - test_screen_inverse.s
+  - ../data.s
 
 # must be on separate lines
 asm_flags:

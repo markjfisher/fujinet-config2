@@ -29,7 +29,7 @@ const char vchar[true+1][true+1] = {{'!' , '!' },
 
 extern void hlinexy(uint8_t x, uint8_t y, uint8_t len, enum htype type);
 extern void vlinexy(uint8_t x, uint8_t y, uint8_t len, bool right);
-extern void iputsxy_c(uint8_t x, uint8_t y, const char* s);
+// extern void iputsxy_c(uint8_t x, uint8_t y, const char* s);
 
 void hlinexy_c(uint8_t x, uint8_t y, uint8_t len, enum htype type)
 {

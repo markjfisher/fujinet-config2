@@ -1,18 +1,24 @@
         .export tmp_val, tmp_len, tmp_x, tmp_y
         .export hchar_lower, hchar_upper
         .export vchar_lower, vchar_upper
+        .export _lower
 
 ; common data fields for various conio routines
 
+; #########################################################
 .bss
 tmp_val:        .res 1      ; shared character/value/index storage
 tmp_len:        .res 1      ; shared length counter  
 tmp_x:          .res 1      ; x position storage for vlinexy, also general tmp value for pointers
 tmp_y:          .res 1      ; y position storage for vlinexy, also general tmp value for pointers
 
+; #########################################################
+.data
+; a boolean value that indicates we are allowing lower mode, default to false. will be 1 (true) for >= APPLE_IIE
+_lower:         .byte 0
+
 ; horizontal line drawing characters to use, indexed by TOP, MID, BOTTOM
 ; vertical line drawing characters to use, indexed by LEFT, RIGHT
-.data
 
 .ifdef SIMPLE_GFX
 ; Simple ASCII characters for visual testing
