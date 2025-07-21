@@ -3,6 +3,17 @@
 This is a new conio based multi-platform config app in the style of config-ng.
 It's inspired from Oliver Schmidt's poc rerendering a config-ng screen with apple2 graphics using mouse font text with cross-apple2 support.
 
+Things to consider:
+
+- we want to make this efficient as possible, so generated asm from C should be checked for bloat, e.g. runner.c uses a small amount of asm (via fast_call) to remove lots of pointless code cc65 generates
+- we want to be as C-like as possible in the core logic, but utility functions (user input, caching of dirs, etc) can be asm where strongly tested
+- should write good unit tests around complex logic/functionality, particularly when writing directly as asm
+- in atari, cc65's conio does a lot of cursor tracking, which we just don't need. it slows the drawing down, and we will consider a cursor-less atari implementation
+
+Features we will build:
+- legacy mode to look like original config is just another module type
+- we can use device specific display and common functions, e.g. drawing windows and displaying data
+
 ## building
 
 To build the application ensure you have the correct compiler/linker for your platform (e.g. cc65), and

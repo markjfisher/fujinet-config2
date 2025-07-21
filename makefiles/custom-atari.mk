@@ -45,13 +45,14 @@ ATARI_CACHE_DIR := $(CACHE_DIR)/atari
 
 # Specify ATARI_EMULATOR=[ALTIRRA|ATARI800] to set which one to run, default is ALTIRRA
 
-ALTIRRA ?= $(ALTIRRA_HOME)/Altirra64.exe \
+ALTIRRA ?= $(ALTIRRA_BIN) \
   $(XS)/portable $(XS)/portablealt:altirra-debug.ini \
+
 
 # Additional args that can be copied into the above lines
 #   $(XS)/debug \
-#   $(XS)/debugcmd: ".loadsym build\$(PROGRAM).$(CURRENT_TARGET).lbl" \
-#   $(XS)/debugcmd: "bp _debug" \
+#   $(XS)/debugcmd: ".loadsym build\$(PROGRAM_TGT).lbl" \
+#   $(XS)/debugcmd: "bp debug" \
 
 ATARI800 ?= $(ATARI800_HOME)/atari800 \
   -xl -nobasic -ntsc -xl-rev custom -config atari800-debug.cfg -run

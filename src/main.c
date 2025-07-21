@@ -1,12 +1,20 @@
-#include <conio.h>
 #include <stdint.h>
-#include <stdio.h>
+#include <stdbool.h>
 
-#include "main.h"
+#include "common/include/runner.h"
 
-char *version = "1.0.0";
+extern void cleanup_host(void);
 
-int main() {
-	clrscr();
-	return 0;
+int main(void)
+{
+	// mod_current starts as MOD_INIT, which is the first module it will load
+	// and modules then dictate what next module to load if any, until MOD_EXIT is set
+    while (mod_current != MOD_EXIT)
+    {
+        run_module();
+    }
+
+    // fix up for the current host
+    cleanup_host();
+    return 0;
 }

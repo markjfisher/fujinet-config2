@@ -5,6 +5,7 @@
 
 /*
   This is the C version of the conio library.
+  IT IS NOT USED IN THE FINAL APP, IT IS ONLY USED FOR PROTOTYPING.
   It is used for prototyping the functions before porting them to assembly.
   Unit tests are written against both versions to compare performance.
  */
